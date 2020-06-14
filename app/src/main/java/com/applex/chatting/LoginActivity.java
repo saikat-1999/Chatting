@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         else {
             loadingBar.setTitle("Signing in");
-            loadingBar.setMessage("Pleasw wait...");
+            loadingBar.setMessage("Please wait...");
             loadingBar.setCanceledOnTouchOutside(true);
             loadingBar.show();
 
