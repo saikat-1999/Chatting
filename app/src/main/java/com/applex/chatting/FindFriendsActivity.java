@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,15 +49,27 @@ public class FindFriendsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        FirebaseRecyclerOptions<Contacts> optons = new FirebaseRecyclerOptions.Builder<Contacts>().setQuery(UsersRef, Contacts.class).build();
+        FirebaseRecyclerOptions<Contacts> options = new FirebaseRecyclerOptions.Builder<Contacts>().setQuery(UsersRef, Contacts.class).build();
 
-        FirebaseRecyclerAdapter<Contacts, FindFriendViewHolder> adapter = new FirebaseRecyclerAdapter<Contacts, FindFriendViewHolder>(optons) {
+        FirebaseRecyclerAdapter<Contacts, FindFriendViewHolder> adapter = new FirebaseRecyclerAdapter<Contacts, FindFriendViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull FindFriendViewHolder findFriendViewHolder, int i, @NonNull Contacts contacts)
+            protected void onBindViewHolder(@NonNull FindFriendViewHolder findFriendViewHolder, final int i, @NonNull Contacts contacts)
             {
                 findFriendViewHolder.userName.setText(contacts.getName());
                 findFriendViewHolder.userStatus.setText(contacts.getStatus());
                 Picasso.get().load(contacts.getImage()).placeholder(R.drawable.ic_baseline_person_24).into(findFriendViewHolder.profileImage);
+
+                findFriendViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        String visit_user_id = getRef(i).getKey();
+
+                        Intent profileIntent = new Intent(FindFriendsActivity.this, ProfileActivity.class);
+                        profileIntent.putExtra("visit_user_id", visit_user_id);
+                        startActivity(profileIntent);
+                    }
+                });
             }
 
             @NonNull
