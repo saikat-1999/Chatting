@@ -3,6 +3,7 @@ package com.applex.chatting;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -47,8 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int GalleryPick = 1;
     private StorageReference UserProfileImagesRef;
     private ProgressDialog loadingBar;
-    String downloadUrl;
-    Uri resultUri;
+    private Toolbar SettingsToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +92,12 @@ public class SettingsActivity extends AppCompatActivity {
         userProfileImage = (CircleImageView) findViewById(R.id.set_proflie_image);
         loadingBar = new ProgressDialog(this);
 
+        SettingsToolbar = findViewById(R.id.settings_toolbar);
+        setSupportActionBar(SettingsToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setTitle("Account Settings");
+
     }
 
     @Override
@@ -117,18 +123,17 @@ public class SettingsActivity extends AppCompatActivity {
                 loadingBar.setCanceledOnTouchOutside(false);
                 loadingBar.show();
 
-                resultUri = result.getUri();
-                if(resultUri!=null) {
+                final Uri resultUri = result.getUri();
 
 
-                    final StorageReference filePath = UserProfileImagesRef.child(currentUserID + "'jpg");
+                final StorageReference filePath = UserProfileImagesRef.child(currentUserID + "'jpg");
                     filePath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    downloadUrl = uri.toString();
+                                    final String downloadUrl = uri.toString();
 
                                     RootRef.child("Users").child(currentUserID).child("image")
                                             .setValue(downloadUrl)
@@ -150,7 +155,7 @@ public class SettingsActivity extends AppCompatActivity {
                             });
                         }
                     });
-                }
+
             }
         }
     }
@@ -170,15 +175,13 @@ public class SettingsActivity extends AppCompatActivity {
         }
         else
         {
-            HashMap<String, String> profileMap = new HashMap<>();
+            HashMap<String, Object> profileMap = new HashMap<>();
             profileMap.put("uid", currentUserID);
             profileMap.put("name", setUserName);
             profileMap.put("status", setStatus);
-            if(downloadUrl!=null){
-                profileMap.put("image",downloadUrl);
-            }
 
-            RootRef.child("Users").child(currentUserID).setValue(profileMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+            RootRef.child("Users").child(currentUserID).updateChildren(profileMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task)
                 {

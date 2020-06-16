@@ -178,13 +178,25 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private void DisplayMessages(DataSnapshot dataSnapshot) {
 
+//        for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+//            String chatDate = dataSnapshot1.child("date").getValue().toString();
+//            String chatMessage = dataSnapshot1.child("message").getValue().toString();
+//            String chatName = dataSnapshot1.child("name").getValue().toString();
+//
+//            displayTextMessages.append(chatName + " :\n" + chatMessage + "\n" + chatName + "     " + chatDate + "\n\n\n");
+//
+//            mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+//        }
+
         Iterator iterator = dataSnapshot.getChildren().iterator();
+
 
         while (iterator.hasNext()){
 
             String chatDate = (String) ((DataSnapshot)iterator.next()).getValue();
             String chatMessage = (String) ((DataSnapshot)iterator.next()).getValue();
             String chatName = (String) ((DataSnapshot)iterator.next()).getValue();
+
 
             displayTextMessages.append(chatName + " :\n" + chatMessage + "\n" + chatName + "     " + chatDate + "\n\n\n");
 
