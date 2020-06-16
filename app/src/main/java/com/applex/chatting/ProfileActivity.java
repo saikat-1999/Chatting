@@ -108,7 +108,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                     else if (request_type.equals("received"))
                     {
-                        Current_State = "received";
+                        Current_State = "request_received";
                         SendMessageRequestButton.setText("Accept Chat Request");
 
                         DeclineMessageRequestButton.setVisibility(View.VISIBLE);
