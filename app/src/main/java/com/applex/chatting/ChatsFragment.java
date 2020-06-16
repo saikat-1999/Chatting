@@ -1,5 +1,6 @@
 package com.applex.chatting;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -33,6 +35,7 @@ public class ChatsFragment extends Fragment {
     private DatabaseReference ChatsRef, UsersRef;
     private FirebaseAuth mAuth;
     private  String currentUserID;
+
 
     public ChatsFragment() {
         // Required empty public constructor
@@ -67,23 +70,37 @@ public class ChatsFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final ChatsViewHolder chatsViewHolder, int i, @NonNull Contacts contacts)
             {
                 final String usersIDs = getRef(i).getKey();
+                final String[] retImage = {"defaultimage"};
 
                 UsersRef.child(usersIDs).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                     {
-                        if (dataSnapshot.hasChild("image"))
-                        {
-                            final String retImage = dataSnapshot.child("image").getValue().toString();
-                            Picasso.get().load(retImage).into(chatsViewHolder.profileImage);
+                        if(dataSnapshot.exists()){
+                            if (dataSnapshot.hasChild("image"))
+                            {
+                                retImage[0] = dataSnapshot.child("image").getValue().toString();
+                                Picasso.get().load(retImage[0]).into(chatsViewHolder.profileImage);
+
+                            }
+                            final String retName = dataSnapshot.child("name").getValue().toString();
+                            final String retStatus = dataSnapshot.child("status").getValue().toString();
+
+                            chatsViewHolder.userName.setText(retName);
+                            chatsViewHolder.userStatus.setText("Last Seen: " + "\n" + "Date " + " Time");
+
+                            chatsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent chatIntent = new Intent(getContext(),ChatActivity.class);
+                                    chatIntent.putExtra("visit_user_id",usersIDs);
+                                    chatIntent.putExtra("visit_user_name",retName);
+                                    chatIntent.putExtra("visit_image", retImage[0]);
+                                    startActivity(chatIntent);
+                                }
+                            });
 
                         }
-                        final String retName = dataSnapshot.child("name").getValue().toString();
-                        final String retStatus = dataSnapshot.child("status").getValue().toString();
-
-                        chatsViewHolder.userName.setText(retName);
-                        chatsViewHolder.userStatus.setText("Last Seen: " + "\n" + "Date " + " Time");
-
 
                     }
 
