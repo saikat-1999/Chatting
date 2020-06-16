@@ -45,7 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
         reveiverUserID = getIntent().getExtras().get("visit_user_id").toString();
         senderUserID = mAuth.getCurrentUser().getUid();
 
-        userProfileImage = (CircleImageView) findViewById(R.id.users_profile_image);
+        userProfileImage = (CircleImageView) findViewById(R.id.visit_profile_image);
         userProfileName = (TextView) findViewById(R.id.visit_user_name);
         userProfileStatus = (TextView) findViewById(R.id.visit_profile_status);
         SendMessageRequestButton = (Button) findViewById(R.id.send_message_request_button);
@@ -108,7 +108,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                     else if (request_type.equals("received"))
                     {
-                        Current_State = "received";
+                        Current_State = "request_received";
                         SendMessageRequestButton.setText("Accept Chat Request");
 
                         DeclineMessageRequestButton.setVisibility(View.VISIBLE);
