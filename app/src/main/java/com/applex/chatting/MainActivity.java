@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if ((dataSnapshot.child("name").exists()))
                 {
-                    Toast.makeText(MainActivity.this, "Welcome",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Welcome",Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
