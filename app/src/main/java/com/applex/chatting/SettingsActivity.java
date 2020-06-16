@@ -123,7 +123,7 @@ public class SettingsActivity extends AppCompatActivity {
                 loadingBar.setCanceledOnTouchOutside(false);
                 loadingBar.show();
 
-                Uri resultUri = result.getUri();
+                final Uri resultUri = result.getUri();
 
 
                 final StorageReference filePath = UserProfileImagesRef.child(currentUserID + "'jpg");
