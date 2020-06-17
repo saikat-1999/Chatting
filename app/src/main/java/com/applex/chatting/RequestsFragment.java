@@ -201,6 +201,81 @@ public class RequestsFragment extends Fragment {
                                         }
                                     });
                                 }
+                                else if(type.equals("sent")){
+                                    Button request_sent_btn = requestsViewHolder.itemView.findViewById(R.id.request_accept_btn);
+                                    request_sent_btn.setText("Req Sent");
+
+                                    requestsViewHolder.itemView.findViewById(R.id.request_cancel_btn).setVisibility(View.INVISIBLE);
+
+                                    UsersRef.child(list_user_id).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                        {
+                                            if (dataSnapshot.hasChild("image"))
+                                            {
+                                                final String requestProfileImage = dataSnapshot.child("image").getValue().toString();
+                                                Picasso.get().load(requestProfileImage).into(requestsViewHolder.profileImage);
+
+                                            }
+                                            final String requestUserName = dataSnapshot.child("name").getValue().toString();
+                                            final String requestUserStatus = dataSnapshot.child("status").getValue().toString();
+
+                                            requestsViewHolder.userName.setText(requestUserName);
+                                            requestsViewHolder.userStatus.setText("you have sent a request to " + requestUserName);
+
+                                            requestsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v)
+                                                {
+                                                    CharSequence options[] = new CharSequence[]
+                                                            {
+                                                                    "Cancel Chat Request"
+                                                            };
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                    builder.setTitle("Already Sent Request");
+
+                                                    builder.setItems(options, new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which)
+                                                        {
+                                                            if (which == 0)
+                                                            {
+                                                                ChatRequestsRef.child(currentUserId).child(list_user_id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task)
+                                                                    {
+                                                                        if (task.isSuccessful())
+                                                                        {
+                                                                            ChatRequestsRef.child(list_user_id).child(currentUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task)
+                                                                                {
+                                                                                    if (task.isSuccessful())
+                                                                                    {
+                                                                                        Toast.makeText(getContext(), "you have cancelled the chat request.", Toast.LENGTH_SHORT).show();
+
+                                                                                    }
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    });
+
+                                                    builder.show();
+
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
                             }
                        }
 
