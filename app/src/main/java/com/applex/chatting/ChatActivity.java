@@ -3,6 +3,7 @@ package com.applex.chatting;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -29,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageTask;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -59,6 +64,9 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView userMessagesList;
 
     private String saveCurrentTime, saveCurrentDate;
+    private String checker = "", myUrl = "";
+    private StorageTask uploadTask;
+    private Uri fileUri;
 
 
     @Override
@@ -88,10 +96,49 @@ public class ChatActivity extends AppCompatActivity {
 
         DisplayLastSeen();
 
+        SendFilesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                CharSequence options[] = new CharSequence[]
+                        {
+                               "Images",
+                               "PDF Files",
+                               "Ms Word Files"
+                        };
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+                builder.setTitle("Select the File");
+
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if (which == 0)
+                        {
+                            checker = "image";
+
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            intent.setType("image/*");
+                            startActivityForResult(intent.createChooser(intent, "Select Image"), 438);
+                        }
+                        if (which == 1)
+                        {
+                            checker = "pdf";
+                        }
+                        if (which == 2)
+                        {
+                            checker = "docx";
+                        }
+                    }
+                });
+            }
+        });
+
 
     }
 
-    //@SuppressLint("WrongViewCast")
+    @SuppressLint("WrongViewCast")
     private void InitializeControllers() {
 
         chattoolbar = findViewById(R.id.chat_toolbar);
@@ -126,6 +173,17 @@ public class ChatActivity extends AppCompatActivity {
         SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
         saveCurrentTime = currentTime.format(calendar.getTime());
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 438 && resultCode == RESULT_OK && data!= null && data.getData()!= null)
+        {
+
+        }
     }
 
     private void DisplayLastSeen(){
