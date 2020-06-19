@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -31,6 +32,8 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,7 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         InitializeFields();
 
-        userName.setVisibility(View.INVISIBLE);
+//        userName.setVisibility(View.INVISIBLE);
 
         UpdateAccountSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +74,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        RetrieveUserInfo();
+//        RetrieveUserInfo();
 
         userProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,28 +178,51 @@ public class SettingsActivity extends AppCompatActivity {
         }
         else
         {
-            HashMap<String, Object> profileMap = new HashMap<>();
-            profileMap.put("uid", currentUserID);
-            profileMap.put("name", setUserName);
-            profileMap.put("status", setStatus);
 
+//            String saveCurrentTime, saveCurrentDate;
+//
+//            Calendar calendar = Calendar.getInstance();
+//
+//            SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
+//            saveCurrentDate = currentDate.format(calendar.getTime());
+//
+//            SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
+//            saveCurrentTime = currentTime.format(calendar.getTime());
 
-            RootRef.child("Users").child(currentUserID).updateChildren(profileMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            UserModel user = new UserModel();
+            user.setName(setUserName);
+            user.setStatus(setStatus);
+            user.setUid(currentUserID);
+            FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid())
+                    .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task)
-                {
-                    if (task.isSuccessful())
-                    {
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
                         SendUserToMainActivity();
                         Toast.makeText(SettingsActivity.this, "Profile Updated Successfully", Toast.LENGTH_SHORT).show();
                     }
-                    else
-                    {
-                        String message = task.getException().toString();
-                        Toast.makeText(SettingsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    else {
+                        Toast.makeText(SettingsActivity.this, "Abar kor", Toast.LENGTH_SHORT).show();
                     }
+
                 }
             });
+//            RootRef.child("Users").child(currentUserID).updateChildren(profileMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task)
+//                {
+//                    if (task.isSuccessful())
+//                    {
+//                        SendUserToMainActivity();
+//                        Toast.makeText(SettingsActivity.this, "Profile Updated Successfully", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else
+//                    {
+//                        String message = task.getException().toString();
+//                        Toast.makeText(SettingsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            });
         }
 
     }
@@ -207,42 +233,42 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(mainIntent);
         finish();
     }
-    private void RetrieveUserInfo()
-    {
-        RootRef.child("Users").child(currentUserID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if((dataSnapshot.exists()) && (dataSnapshot.hasChild("name")) && (dataSnapshot.hasChild("image")))
-                {
-                   String retrieveUserName = dataSnapshot.child("name").getValue().toString();
-                   String retrieveStatus = dataSnapshot.child("status").getValue().toString();
-                   String retrieveProfileImage = dataSnapshot.child("image").getValue().toString();
 
-                   userName.setText(retrieveUserName);
-                   userStatus.setText(retrieveStatus);
-                    Picasso.get().load(retrieveProfileImage).into(userProfileImage);
-                }
-                else if ((dataSnapshot.exists()) && (dataSnapshot.hasChild("name")))
-                {
-                    String retrieveUserName = dataSnapshot.child("name").getValue().toString();
-                    String retrieveStatus = dataSnapshot.child("status").getValue().toString();
-
-                    userName.setText(retrieveUserName);
-                    userStatus.setText(retrieveStatus);
-
-                }
-                else
-                {
-                    userName.setVisibility(View.VISIBLE);
-                    Toast.makeText(SettingsActivity.this, "Please set & update your profile information", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    private void RetrieveUserInfo() {
+//        RootRef.child("Users").child(currentUserID).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+//            {
+//                if((dataSnapshot.exists()) && (dataSnapshot.hasChild("name")) && (dataSnapshot.hasChild("image")))
+//                {
+//                   String retrieveUserName = dataSnapshot.child("name").getValue().toString();
+//                   String retrieveStatus = dataSnapshot.child("status").getValue().toString();
+//                   String retrieveProfileImage = dataSnapshot.child("image").getValue().toString();
+//
+//                   userName.setText(retrieveUserName);
+//                   userStatus.setText(retrieveStatus);
+//                    Picasso.get().load(retrieveProfileImage).into(userProfileImage);
+//                }
+//                else if ((dataSnapshot.exists()) && (dataSnapshot.hasChild("name")))
+//                {
+//                    String retrieveUserName = dataSnapshot.child("name").getValue().toString();
+//                    String retrieveStatus = dataSnapshot.child("status").getValue().toString();
+//
+//                    userName.setText(retrieveUserName);
+//                    userStatus.setText(retrieveStatus);
+//
+//                }
+//                else
+//                {
+//                    userName.setVisibility(View.VISIBLE);
+//                    Toast.makeText(SettingsActivity.this, "Please set & update your profile information", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 }

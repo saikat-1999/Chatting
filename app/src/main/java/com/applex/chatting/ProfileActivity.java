@@ -45,7 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
         ContactsRef = FirebaseDatabase.getInstance().getReference().child("Contacts");
         NotificationRef = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
-        reveiverUserID = getIntent().getExtras().get("visit_user_id").toString();
+        //reveiverUserID = getIntent().getExtras().get("visit_user_id").toString();
         senderUserID = mAuth.getCurrentUser().getUid();
 
         userProfileImage = (CircleImageView) findViewById(R.id.visit_profile_image);

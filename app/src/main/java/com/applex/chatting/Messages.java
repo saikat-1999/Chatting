@@ -4,20 +4,11 @@ public class Messages
 {
     private  String from, message, type, to, messageID, time, date, name;
 
+    private boolean seen;
+
     private Messages()
     {
 
-    }
-
-    public Messages(String from, String message, String type, String to, String messageID, String time, String date, String name) {
-        this.from = from;
-        this.message = message;
-        this.type = type;
-        this.to = to;
-        this.messageID = messageID;
-        this.time = time;
-        this.date = date;
-        this.name = name;
     }
 
     public String getFrom() {
@@ -82,5 +73,13 @@ public class Messages
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 }

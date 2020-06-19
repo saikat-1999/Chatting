@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +43,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public class MessageViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView senderMessageText, receiverMessageText;
+        public TextView senderMessageText, receiverMessageText, senderTime, receiverTime;
         public CircleImageView receiverProfileImage;
         public ImageView messageSenderPicture, messageReceiverPicture;
+        public LinearLayout sender;
+        public LinearLayout receiver;
 
         public MessageViewHolder(@NonNull View itemView)
         {
@@ -55,6 +58,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             receiverProfileImage = (CircleImageView) itemView.findViewById(R.id.message_profile_image);
             messageReceiverPicture = (ImageView) itemView.findViewById(R.id.message_receiver_image_view);
             messageSenderPicture = (ImageView) itemView.findViewById(R.id.message_sender_image_view);
+            senderTime = itemView.findViewById(R.id.sender_timestamp);
+            receiverTime = itemView.findViewById(R.id.receiver_timestamp);
+
+            sender = itemView.findViewById(R.id.sender);
+            receiver = itemView.findViewById(R.id.receiver);
         }
     }
 
@@ -98,32 +106,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         });
 
 
-        holder.receiverMessageText.setVisibility(View.GONE);
-        holder.receiverProfileImage.setVisibility(View.GONE);
-        holder.senderMessageText.setVisibility(View.GONE);
+//        holder.receiverMessageText.setVisibility(View.GONE);
+//        holder.receiverProfileImage.setVisibility(View.GONE);
+//        holder.senderMessageText.setVisibility(View.GONE);
         holder.messageSenderPicture.setVisibility(View.GONE);
         holder.messageReceiverPicture.setVisibility(View.GONE);
+        holder.sender.setVisibility(View.GONE);
+        holder.receiver.setVisibility(View.GONE);
 
         if (fromMessageType.equals("text"))
         {
-
             if (fromUserID.equals(messageSenderID))
             {
+                holder.sender.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setVisibility(View.VISIBLE);
-
-                holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
-                holder.senderMessageText.setTextColor(Color.BLACK);
-                holder.senderMessageText.setText(messages.getMessage() + "\n \n" + messages.getTime() + " - " + messages.getDate());
+//                holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
+                holder.senderMessageText.setText(messages.getMessage());
+                holder.senderTime.setText(messages.getTime() + " - " + messages.getDate());
             }
             else
             {
-
+//dara call ese6 ekta RUN KORE DEKH
+                holder.receiver.setVisibility(View.VISIBLE);
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.receiverMessageText.setVisibility(View.VISIBLE);
-
-                holder.receiverMessageText.setBackgroundResource(R.drawable.receiver_messages_layout);
-                holder.receiverMessageText.setTextColor(Color.BLACK);
-                holder.receiverMessageText.setText(messages.getMessage() + "\n \n" + messages.getTime() + " - " + messages.getDate());
+                holder.receiverMessageText.setText(messages.getMessage());
+                holder.receiverTime.setText(messages.getTime() + " - " + messages.getDate());
 
             }
         }
