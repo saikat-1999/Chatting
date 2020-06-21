@@ -100,7 +100,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful())
                                 {
-                                    Toast.makeText(getApplicationContext(),"jingalala hoo hoo", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),RandomString.getAlphaNumericString(20), Toast.LENGTH_SHORT).show();
                                 }
                                 else
                                 {
@@ -143,6 +143,20 @@ public class FindFriendsActivity extends AppCompatActivity {
             userName = itemView.findViewById(R.id.user_profile_name);
             userStatus = itemView.findViewById(R.id.user_status);
             profileImage = itemView.findViewById(R.id.users_profile_image);
+        }
+    }
+
+    public static class RandomString {
+        static String getAlphaNumericString (int n)
+        {
+            String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvwxyz";
+            StringBuilder sb = new StringBuilder(n);
+            for (int i=0; i<n; i++)
+            {
+                int index = (int) (AlphaNumericString.length()*Math.random());
+                sb.append(AlphaNumericString.charAt(index));
+            }
+            return sb.toString();
         }
     }
 }
