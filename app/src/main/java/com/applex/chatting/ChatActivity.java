@@ -164,6 +164,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages")
+                .orderBy("timestamp")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e)
@@ -471,11 +472,12 @@ public class ChatActivity extends AppCompatActivity {
             Messages messages = new Messages();
             messages.setMessage(messageText);
             messages.setFrom(FirebaseAuth.getInstance().getUid());
-            messages.setName("Sarbari");
+            messages.setName("Saikat");
             messages.setSeen(false);
             messages.setType("text");
             FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages/").document()
                     .set(messages);
+            MessageInputText.setText("");
             //WriteBatch batch = FirebaseFirestore.getInstance().batch();
 
 

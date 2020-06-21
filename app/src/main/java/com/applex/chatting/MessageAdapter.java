@@ -46,8 +46,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public TextView senderMessageText, receiverMessageText, senderTime, receiverTime;
         //public CircleImageView receiverProfileImage;
         public ImageView messageSenderPicture, messageReceiverPicture;
-        public LinearLayout sender;
-        public LinearLayout receiver;
+        public LinearLayout send;
+        public LinearLayout receive;
 
         public MessageViewHolder(@NonNull View itemView)
         {
@@ -61,8 +61,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             senderTime = itemView.findViewById(R.id.sender_timestamp);
             receiverTime = itemView.findViewById(R.id.receiver_timestamp);
 
-            sender = itemView.findViewById(R.id.sender);
-            receiver = itemView.findViewById(R.id.receiver);
+            send = itemView.findViewById(R.id.send);
+            receive = itemView.findViewById(R.id.receive);
         }
     }
 
@@ -111,18 +111,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //        holder.senderMessageText.setVisibility(View.GONE);
         holder.messageSenderPicture.setVisibility(View.GONE);
         holder.messageReceiverPicture.setVisibility(View.GONE);
-        holder.sender.setVisibility(View.GONE);
-        holder.receiver.setVisibility(View.GONE);
+        holder.send.setVisibility(View.GONE);
+        holder.receive.setVisibility(View.GONE);
 
         if (fromMessageType.equals("text"))
         {
-            if (fromUserID.equals(messageSenderID))
+            if (fromUserID.matches(messageSenderID))
             {
-                holder.sender.setVisibility(View.VISIBLE);
+                holder.send.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                 holder.senderMessageText.setText(messages.getMessage());
-                //holder.senderTime.setText(messages.getTimestamp());
+                holder.senderTime.setText(messages.getTimestamp().toDate().toString());
 
             }
 //            else

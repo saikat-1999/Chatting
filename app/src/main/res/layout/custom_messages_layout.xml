@@ -14,7 +14,7 @@
         android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/sender"
+        android:id="@+id/receive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -64,7 +64,7 @@
         android:scaleType="centerCrop"/>
 
     <LinearLayout
-        android:id="@+id/receiver"
+        android:id="@+id/send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
