@@ -76,21 +76,22 @@ public class FindFriendsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v)
                     {
-//                        String visit_user_id =;
+                        final String RoomID;
+                        RoomID = getAlphaNumericString(20);
                         ChatRoomModel chatRoomModel1 = new ChatRoomModel();
                         ChatRoomModel chatRoomModel2 = new ChatRoomModel();
                         chatRoomModel1.setLastMessage("Hello");
                         chatRoomModel1.setReceiver(userModel.getName());
                         chatRoomModel1.setReceiverDP(userModel.getImage());
                         chatRoomModel1.setReceiverUid(userModel.getUid());
-                        chatRoomModel1.setRoomID("abcd123");
-                        chatRoomModel2.setRoomID("abcd123");
-                        chatRoomModel2.setReceiver("Sarbari");
+                        chatRoomModel1.setRoomID(RoomID);
+                        chatRoomModel2.setRoomID(RoomID);
+                        chatRoomModel2.setReceiver("Sarbari");//Current User
                         chatRoomModel2.setReceiverUid(FirebaseAuth.getInstance().getUid());
                         chatRoomModel2.setReceiverDP("abc");
                         chatRoomModel2.setLastMessage("hi");
-                        DocumentReference doc1 = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).collection("ChatRooms").document();
-                        DocumentReference doc2 = FirebaseFirestore.getInstance().collection("Users").document(userModel.getUid()).collection("ChatRooms").document();
+                        DocumentReference doc1 = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).collection("ChatRooms").document(userModel.getUid());
+                        DocumentReference doc2 = FirebaseFirestore.getInstance().collection("Users").document(userModel.getUid()).collection("ChatRooms").document(FirebaseAuth.getInstance().getUid());
                         WriteBatch batch = FirebaseFirestore.getInstance().batch();
                         batch.set(doc1, chatRoomModel1);
                         batch.set(doc2, chatRoomModel2);
@@ -100,7 +101,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful())
                                 {
-                                    Toast.makeText(getApplicationContext(),RandomString.getAlphaNumericString(20), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),RoomID, Toast.LENGTH_SHORT).show();
                                 }
                                 else
                                 {
@@ -109,9 +110,6 @@ public class FindFriendsActivity extends AppCompatActivity {
 
                             }
                         });
-//                        Intent profileIntent = new Intent(FindFriendsActivity.this, ProfileActivity.class);
-////                        profileIntent.putExtra("visit_user_id", visit_user_id);
-//                        startActivity(profileIntent);
 
                     }
                 });
@@ -146,8 +144,7 @@ public class FindFriendsActivity extends AppCompatActivity {
         }
     }
 
-    public static class RandomString {
-        static String getAlphaNumericString (int n)
+        private String getAlphaNumericString (int n)
         {
             String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvwxyz";
             StringBuilder sb = new StringBuilder(n);
@@ -158,5 +155,5 @@ public class FindFriendsActivity extends AppCompatActivity {
             }
             return sb.toString();
         }
-    }
+
 }

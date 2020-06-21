@@ -1,41 +1,33 @@
 package com.applex.chatting;
 
 public class ChatRoomModel {
-    private String LastMessage, Receiver, ReceiverDP, roomID, ReceiverUid;
+    private String lastMessage, receiver, receiverDP, roomID, receiverUid;
 
     public ChatRoomModel() {
     }
 
-    public String getReceiverUid() {
-        return ReceiverUid;
-    }
-
-    public void setReceiverUid(String receiverUid) {
-        ReceiverUid = receiverUid;
-    }
-
     public String getLastMessage() {
-        return LastMessage;
+        return lastMessage;
     }
 
     public void setLastMessage(String lastMessage) {
-        LastMessage = lastMessage;
+        this.lastMessage = lastMessage;
     }
 
     public String getReceiver() {
-        return Receiver;
+        return receiver;
     }
 
     public void setReceiver(String receiver) {
-        Receiver = receiver;
+        this.receiver = receiver;
     }
 
     public String getReceiverDP() {
-        return ReceiverDP;
+        return receiverDP;
     }
 
     public void setReceiverDP(String receiverDP) {
-        ReceiverDP = receiverDP;
+        this.receiverDP = receiverDP;
     }
 
     public String getRoomID() {
@@ -44,5 +36,13 @@ public class ChatRoomModel {
 
     public void setRoomID(String roomID) {
         this.roomID = roomID;
+    }
+
+    public String getReceiverUid() {
+        return receiverUid;
+    }
+
+    public void setReceiverUid(String receiverUid) {
+        this.receiverUid = receiverUid;
     }
 }

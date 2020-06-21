@@ -1,12 +1,16 @@
 package com.applex.chatting;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.ServerTimestamp;
+
 public class Messages
 {
-    private  String from, message, type, to, messageID, time, date, name;
+    private  String from, message, type, name;
+    @ServerTimestamp private Timestamp timestamp;
 
     private boolean seen;
 
-    private Messages()
+    Messages()
     {
 
     }
@@ -35,44 +39,20 @@ public class Messages
         this.type = type;
     }
 
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
-    }
-
-    public String getMessageID() {
-        return messageID;
-    }
-
-    public void setMessageID(String messageID) {
-        this.messageID = messageID;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public boolean isSeen() {
