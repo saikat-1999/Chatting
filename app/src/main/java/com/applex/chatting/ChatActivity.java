@@ -472,7 +472,7 @@ public class ChatActivity extends AppCompatActivity {
             Messages messages = new Messages();
             messages.setMessage(messageText);
             messages.setFrom(FirebaseAuth.getInstance().getUid());
-            messages.setName("Saikat");
+            messages.setName("Sarbari");
             messages.setSeen(false);
             messages.setType("text");
             FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages/").document()

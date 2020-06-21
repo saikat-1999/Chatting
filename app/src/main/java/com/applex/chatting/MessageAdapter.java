@@ -120,21 +120,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             {
                 holder.send.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setVisibility(View.VISIBLE);
-                holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
+                //holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                 holder.senderMessageText.setText(messages.getMessage());
-                holder.senderTime.setText(messages.getTimestamp().toDate().toString());
+                //holder.senderTime.setText(messages.getTimestamp().toDate().toString());
 
             }
-//            else
-//            {
-////dara call ese6 ekta RUN KORE DEKH
-//                holder.receiver.setVisibility(View.VISIBLE);
-//                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
-//                holder.receiverMessageText.setVisibility(View.VISIBLE);
-//                holder.receiverMessageText.setText(messages.getMessage());
-//                holder.receiverTime.setText(messages.getTime() + " - " + messages.getDate());
-//
-//            }
+            else
+            {
+//dara call ese6 ekta RUN KORE DEKH
+                holder.receive.setVisibility(View.VISIBLE);
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.receiverMessageText.setVisibility(View.VISIBLE);
+                holder.receiverMessageText.setText(messages.getMessage());
+                //holder.receiverTime.setText(messages.getTimestamp().toDate().toString());
+
+            }
         }
 //        else if (fromMessageType.equals("image"))
 //        {
