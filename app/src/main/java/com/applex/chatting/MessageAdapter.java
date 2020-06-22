@@ -136,38 +136,38 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             }
         }
-//        else if (fromMessageType.equals("image"))
-//        {
-//            if (fromUserID.equals(messageSenderID))
-//            {
-//                holder.messageSenderPicture.setVisibility(View.VISIBLE);
-//
-//                Picasso.get().load(messages.getMessage()).into(holder.messageSenderPicture);
-//            }
-//            else
-//            {
-//                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
-//                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
-//
-//                Picasso.get().load(messages.getMessage()).into(holder.messageReceiverPicture);
-//            }
-//        }
-//        else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx"))
-//        {
-//            if (fromUserID.equals(messageSenderID))
-//            {
-//                holder.messageSenderPicture.setVisibility(View.VISIBLE);
-//
-//                holder.messageSenderPicture.setBackgroundResource(R.drawable.ic_baseline_insert_drive_file_24);
-//
-//            }
-//            else
-//            {
-//                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
-//                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
-//
-//                holder.messageReceiverPicture.setBackgroundResource(R.drawable.ic_baseline_insert_drive_file_24);
-//            }
+        else if (fromMessageType.equals("image"))
+        {
+            if (fromUserID.equals(messageSenderID))
+            {
+                holder.messageSenderPicture.setVisibility(View.VISIBLE);
+
+                Picasso.get().load(messages.getMessage()).into(holder.messageSenderPicture);
+            }
+            else
+            {
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
+
+                Picasso.get().load(messages.getMessage()).into(holder.messageReceiverPicture);
+            }
+        }
+        else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx"))
+        {
+            if (fromUserID.equals(messageSenderID))
+            {
+                holder.messageSenderPicture.setVisibility(View.VISIBLE);
+
+                holder.messageSenderPicture.setBackgroundResource(R.drawable.ic_baseline_insert_drive_file_24);
+
+            }
+            else
+            {
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
+
+                holder.messageReceiverPicture.setBackgroundResource(R.drawable.ic_baseline_insert_drive_file_24);
+            }
         }
 
 //        if (fromUserID.equals(messageSenderID))
@@ -379,7 +379,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //                }
 //            });
 //        }
-//    }
+   }
 
 
 

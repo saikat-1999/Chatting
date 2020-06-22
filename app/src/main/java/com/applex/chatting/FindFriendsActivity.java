@@ -86,7 +86,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                         chatRoomModel1.setReceiverUid(userModel.getUid());
                         chatRoomModel1.setRoomID(RoomID);
                         chatRoomModel2.setRoomID(RoomID);
-                        chatRoomModel2.setReceiver("Sarbari");//Current User
+                        chatRoomModel2.setReceiver("Saikat");//Current User
                         chatRoomModel2.setReceiverUid(FirebaseAuth.getInstance().getUid());
                         chatRoomModel2.setReceiverDP("abc");
                         chatRoomModel2.setLastMessage("hi");

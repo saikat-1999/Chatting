@@ -14,7 +14,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -52,6 +58,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,13 +70,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private String messageReceiverID,messageReceiverName,messageReceiverImage,messageSenderID;
+    private String messageReceiverID,messageReceiverName,messageReceiverImage,messageSenderID,ts;
     private TextView userName,userLastSeen;
     private CircleImageView userImage;
     private Toolbar chattoolbar;
     private ImageButton SendMessageButton, SendFilesButton;
     private EditText MessageInputText;
     private FirebaseAuth mAuth;
+    private byte[] pic;
+    //private ImageCompressor imageCompressor;
+
     //private DatabaseReference RootRef;
 
     private final List<Messages>  messagesList = new ArrayList<>();
@@ -267,22 +277,22 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-//    {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == 438 && resultCode == RESULT_OK && data!= null && data.getData()!= null)
-//        {
-//            loadingBar.setTitle("Sending File");
-//            loadingBar.setMessage("Please wait, we are sending that file...");
-//            loadingBar.setCanceledOnTouchOutside(false);
-//            loadingBar.show();
-//
-//            fileUri = data.getData();
-//
-//            if (!checker.equals("image"))
-//            {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 438 && resultCode == RESULT_OK && data!= null && data.getData()!= null)
+        {
+            loadingBar.setTitle("Sending File");
+            loadingBar.setMessage("Please wait, we are sending that file...");
+            loadingBar.setCanceledOnTouchOutside(false);
+            loadingBar.show();
+
+            fileUri = data.getData();
+
+            if (!checker.equals("image"))
+            {
 //                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Document Files");
 //
 //                final String messageSenderRef = "Messages/" + messageSenderID + "/" + messageReceiverID;
@@ -293,7 +303,10 @@ public class ChatActivity extends AppCompatActivity {
 //
 //                final String messagePushID = userMessageKeyRef.getKey();
 //
-//                final StorageReference filePath = storageReference.child(messagePushID + "." + checker);
+//                Long tsLong = System.currentTimeMillis();
+//                ts = tsLong.toString();
+//
+//                final StorageReference filePath = storageReference.child(ts + "." + checker);
 //
 //                filePath.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 //                    @Override
@@ -338,11 +351,11 @@ public class ChatActivity extends AppCompatActivity {
 //                        loadingBar.setMessage((int) p + " % Uploading...");
 //                    }
 //                });
-//            }
-//            else if (checker.equals("image"))
-//            {
-//                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
-//
+            }
+            else if (checker.equals("image"))
+            {
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
+
 //                final String messageSenderRef = "Messages/" + messageSenderID + "/" + messageReceiverID;
 //                final String messageReceiverRef = "Messages/" + messageReceiverID + "/" + messageSenderID;
 //
@@ -350,30 +363,56 @@ public class ChatActivity extends AppCompatActivity {
 //                        .child(messageSenderID).child(messageReceiverID).push();
 //
 //                final String messagePushID = userMessageKeyRef.getKey();
-//
-//                final StorageReference filePath = storageReference.child(messagePushID + "." + "jpg");
-//
-//                uploadTask = filePath.putFile(fileUri);
-//
-//                uploadTask.continueWithTask(new Continuation() {
-//                    @Override
-//                    public Object then(@NonNull Task task) throws Exception
-//                    {
-//                        if (!task.isSuccessful())
-//                        {
-//                            throw task.getException();
-//                        }
-//
-//                        return filePath.getDownloadUrl();
-//                    }
-//                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Uri> task)
-//                    {
-//                        if (task.isSuccessful())
-//                        {
-//                            Uri downloadUrl = task.getResult();
-//                            myUrl = downloadUrl.toString();
+                Long tsLong = System.currentTimeMillis();
+                ts = tsLong.toString();
+
+                final StorageReference filePath = storageReference.child(ts + "." + "jpg");
+
+                uploadTask = filePath.putFile(fileUri);
+
+                uploadTask.continueWithTask(new Continuation() {
+                    @Override
+                    public Object then(@NonNull Task task) throws Exception
+                    {
+                        if (!task.isSuccessful())
+                        {
+                            throw task.getException();
+                        }
+
+                        return filePath.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task)
+                    {
+                        if (task.isSuccessful())
+                        {
+                            Uri downloadUrl = task.getResult();
+                            myUrl = downloadUrl.toString();
+
+                            Messages messages = new Messages();
+                            messages.setMessage(myUrl);
+                            messages.setFrom(FirebaseAuth.getInstance().getUid());
+                            messages.setName("Saikat");
+                            messages.setSeen(false);
+                            messages.setType(checker);
+                            FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages/").document()
+                                    .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        loadingBar.dismiss();
+                                        Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        loadingBar.dismiss();
+                                        Toast.makeText(ChatActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                    }
+                                    MessageInputText.setText("");
+
+                                }
+                            });
+
 //
 //                            Map messageTextBody = new HashMap();
 //                            messageTextBody.put("message",myUrl);
@@ -388,7 +427,7 @@ public class ChatActivity extends AppCompatActivity {
 //                            Map messageBodyDetails = new HashMap();
 //                            messageBodyDetails.put(messageSenderRef + "/" + messagePushID, messageTextBody);
 //                            messageBodyDetails.put(messageReceiverRef + "/" + messagePushID, messageTextBody);
-//
+
 //                            RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
 //                                @Override
 //                                public void onComplete(@NonNull Task task) {
@@ -405,20 +444,20 @@ public class ChatActivity extends AppCompatActivity {
 //                                    MessageInputText.setText("");
 //                                }
 //                            });
-//                        }
-//                    }
-//                });
-//
-//
-//            }
-//            else
-//            {
-//                loadingBar.dismiss();
-//                Toast.makeText(this,"Nothing Selected, Error.", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
-//
+                        }
+                    }
+                });
+
+
+            }
+            else
+            {
+                loadingBar.dismiss();
+                Toast.makeText(this,"Nothing Selected, Error.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 //    private void DisplayLastSeen(){
 //
 //        RootRef.child("Users").child(messageReceiverID)
@@ -451,13 +490,13 @@ public class ChatActivity extends AppCompatActivity {
 //                });
 //    }
 
-//    @Override
-//    protected void onStart()
-//    {
-//        super.onStart();
-//
-//
-//    }
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
+
+    }
 
     private void SendMessage(){
 
@@ -472,14 +511,23 @@ public class ChatActivity extends AppCompatActivity {
             Messages messages = new Messages();
             messages.setMessage(messageText);
             messages.setFrom(FirebaseAuth.getInstance().getUid());
-            messages.setName("Sarbari");
+            messages.setName("Saikat");
             messages.setSeen(false);
             messages.setType("text");
             FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages/").document()
-                    .set(messages);
-            MessageInputText.setText("");
-            //WriteBatch batch = FirebaseFirestore.getInstance().batch();
+                    .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(ChatActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    }
+                   MessageInputText.setText("");
 
+                }
+            });
 
         }
 //            String messageSenderRef = "Messages/" + messageSenderID + "/" + messageReceiverID;
@@ -521,4 +569,164 @@ public class ChatActivity extends AppCompatActivity {
 //        }
 
     }
+
+//    class ImageCompressor extends AsyncTask<Void, Void, byte[]> {
+//
+//        private final float maxHeight = 1080.0f;
+//        private final float maxWidth = 720.0f;
+//        private byte[] pic2;
+//
+//
+//        public ImageCompressor(byte[] pic) {
+//            this.pic2 = pic;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        public byte[] doInBackground(Void... strings) {
+//            Bitmap scaledBitmap = null;
+//
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            Bitmap bmp = BitmapFactory.decodeByteArray(pic2, 0, pic2.length, options);
+//
+//            int actualHeight = options.outHeight;
+//            int actualWidth = options.outWidth;
+//
+//            float imgRatio = (float) actualWidth / (float) actualHeight;
+//            float maxRatio = maxWidth / maxHeight;
+//
+//            if (actualHeight > maxHeight || actualWidth > maxWidth) {
+//                if (imgRatio < maxRatio) {
+//                    imgRatio = maxHeight / actualHeight;
+//                    actualWidth = (int) (imgRatio * actualWidth);
+//                    actualHeight = (int) maxHeight;
+//                } else if (imgRatio > maxRatio) {
+//                    imgRatio = maxWidth / actualWidth;
+//                    actualHeight = (int) (imgRatio * actualHeight);
+//                    actualWidth = (int) maxWidth;
+//                } else {
+//                    actualHeight = (int) maxHeight;
+//                    actualWidth = (int) maxWidth;
+//
+//                }
+//            }
+//
+//            options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
+//            options.inJustDecodeBounds = false;
+//            options.inDither = false;
+//            options.inPurgeable = true;
+//            options.inInputShareable = true;
+//            options.inTempStorage = new byte[16 * 1024];
+//
+//            try {
+//                bmp = BitmapFactory.decodeByteArray(pic2, 0, pic2.length, options);
+//            } catch (OutOfMemoryError exception) {
+//                exception.printStackTrace();
+//
+//            }
+//            try {
+//                scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.RGB_565);
+//            } catch (OutOfMemoryError exception) {
+//                exception.printStackTrace();
+//            }
+//
+//            float ratioX = actualWidth / (float) options.outWidth;
+//            float ratioY = actualHeight / (float) options.outHeight;
+//            float middleX = actualWidth / 4.0f;
+//            float middleY = actualHeight / 4.0f;
+//
+//            Matrix scaleMatrix = new Matrix();
+//            scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
+//
+//            Canvas canvas = new Canvas(scaledBitmap);
+//            canvas.setMatrix(scaleMatrix);
+//            canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 4, middleY - bmp.getHeight() / 4, new Paint(Paint.FILTER_BITMAP_FLAG));
+//
+//            if(bmp!=null)
+//            {
+//                bmp.recycle();
+//            }
+//            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 60, out);
+//            byte[] by = out.toByteArray();
+//            return by;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(byte[] picCompressed) {
+//            if(picCompressed!= null) {
+//                pic = picCompressed;
+////                Toast.makeText(getApplicationContext(), ""+ pic.length/1024,Toast.LENGTH_LONG).show();
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(picCompressed, 0 ,picCompressed.length);
+//                postimage.setImageBitmap(bitmap);
+//                container_image.setVisibility(View.VISIBLE);
+//                postimage.setVisibility(View.VISIBLE);
+////                /////////////SELECT GLOBAL/YOUR CAMPUS/////////////
+////                if (postspinner.getSelectedItem().toString().matches("Global")){
+////                    reference = storageReferenece.child("Home/").child("Global/").child("Feeds/").child(fireuser.getUid() +"_"+ ts + "post_img");
+////                }
+////                else if(postspinner.getSelectedItem().toString().matches("Your Campus")){
+////                    reference = storageReferenece.child("Home/").child(CAMPUSNAME+"/").child("Feeds/").child(fireuser.getUid() +"_"+ ts + "post_img");
+////                }
+////                else {
+////                    reference = storageReferenece.child("Home/").child(CAMPUSNAME+"/").child("Feeds/").child(fireuser.getUid() +"_"+ ts + "post_img");
+////                }
+////                /////////////SELECT GLOBAL/YOUR CAMPUS/////////////
+////                reference.putBytes(pic)
+////                        .addOnSuccessListener(taskSnapshot ->
+////                                reference.getDownloadUrl().addOnSuccessListener(uri -> {
+////                                    downloadUri = uri;
+////                                    generatedFilePath = downloadUri.toString();
+////
+////                                    homePostModel.setImg(generatedFilePath);
+////                                    docRef.set(homePostModel).addOnCompleteListener(task -> {
+////                                        if(task.isSuccessful()){
+////                                            progressDialog.dismiss();
+////                                            NewPostHome.super.onBackPressed();
+////
+////                                        }else{
+////                                            Utility.showToast(getApplicationContext(),"Something went wrong...");
+////
+////                                        }
+////                                    });
+////
+////                                }))
+////
+////                        .addOnFailureListener(e -> {
+////                            Utility.showToast(getApplicationContext(), "Something went wrong");
+////                            if(progressDialog!= null)
+////                                 progressDialog.dismiss();
+////
+////                        });
+//
+//            }
+//        }
+//
+//        private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+//            final int height = options.outHeight;
+//            final int width = options.outWidth;
+//            int inSampleSize = 1;
+//
+//            if (height > reqHeight || width > reqWidth) {
+//                final int heightRatio = Math.round((float) height / (float) reqHeight);
+//                final int widthRatio = Math.round((float) width / (float) reqWidth);
+//                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+//            }
+//            final float totalPixels = width * height;
+//            final float totalReqPixelsCap = reqWidth * reqHeight * 4;
+//
+//            while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+//                inSampleSize++;
+//            }
+//
+//            return inSampleSize;
+//        }
+//
+//    }
 }
