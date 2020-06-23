@@ -5,7 +5,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 public class Messages
 {
-    private  String fromUid, message, type, image;
+    private  String fromUid, message, type, image, document;
     @ServerTimestamp private Timestamp timestamp;
 
     private boolean seen;
@@ -45,6 +45,14 @@ public class Messages
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public Timestamp getTimestamp() {

@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
@@ -279,8 +281,8 @@ public class ChatActivity extends AppCompatActivity {
 
             if (!checker.equals("image"))
             {
-//                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Document Files");
-//
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Document Files");
+
 //                final String messageSenderRef = "Messages/" + messageSenderID + "/" + messageReceiverID;
 //                final String messageReceiverRef = "Messages/" + messageReceiverID + "/" + messageSenderID;
 //
@@ -288,21 +290,42 @@ public class ChatActivity extends AppCompatActivity {
 //                        .child(messageSenderID).child(messageReceiverID).push();
 //
 //                final String messagePushID = userMessageKeyRef.getKey();
-//
-//                Long tsLong = System.currentTimeMillis();
-//                ts = tsLong.toString();
-//
-//                final StorageReference filePath = storageReference.child(ts + "." + checker);
-//
-//                filePath.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
-//                    {
-//                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                            @Override
-//                            public void onSuccess(Uri uri)
-//                            {
-//                                String downloadUrl = uri.toString();
+
+                Long tsLong = System.currentTimeMillis();
+                ts = tsLong.toString();
+
+                final StorageReference filePath = storageReference.child(ts + "." + checker);
+
+                filePath.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                    {
+                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri)
+                            {
+
+                                String downloadUrl = uri.toString();
+                                Messages messages = new Messages();
+                                messages.setDocument(downloadUrl);
+                                messages.setFromUid(FirebaseAuth.getInstance().getUid());
+                                messages.setSeen(false);
+                                messages.setType(checker);
+                                FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
+                                        .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            loadingBar.dismiss();
+                                            Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            loadingBar.dismiss();
+                                            Toast.makeText(ChatActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                        }
+                                        MessageInputText.setText("");
+
+                                    }
+                                });
 //                                Map messageTextBody = new HashMap();
 //                                messageTextBody.put("message", downloadUrl);
 //                                messageTextBody.put("name", fileUri.getLastPathSegment());
@@ -318,25 +341,25 @@ public class ChatActivity extends AppCompatActivity {
 //                                messageBodyDetails.put(messageReceiverRef + "/" + messagePushID, messageTextBody);
 //
 //                                RootRef.updateChildren(messageBodyDetails);
-//                                loadingBar.dismiss();
-//                            }
-//                        }).addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e)
-//                            {
-//                                loadingBar.dismiss();
-//                                Toast.makeText(ChatActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//                    }
-//                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot)
-//                    {
-//                        double p = (100.0*taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-//                        loadingBar.setMessage((int) p + " % Uploading...");
-//                    }
-//                });
+                                loadingBar.dismiss();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e)
+                            {
+                                loadingBar.dismiss();
+                                Toast.makeText(ChatActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot)
+                    {
+                        double p = (100.0*taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        loadingBar.setMessage((int) p + " % Uploading...");
+                    }
+                });
             }
             else if (checker.equals("image"))
             {
