@@ -222,7 +222,8 @@ public class ChatActivity extends AppCompatActivity {
 
         messageAdapter.onLongClickListener((position) ->
         {
-            Messages messages = new Messages();
+            FirebaseFirestore.getInstance().document("Rooms/" + getIntent().getStringExtra("ID")+"/Messages/" + messagesList.get(position).getDocID())
+                    .delete();
 
             messagesList.remove(position);
             messageAdapter.notifyItemRemoved(position);
