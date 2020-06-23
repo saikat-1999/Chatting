@@ -1,5 +1,9 @@
 package com.applex.chatting;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -20,11 +25,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 {
     private List<Messages> userMessagesList;
     private FirebaseAuth mAuth;
-    private DatabaseReference usersRef;
+    private String ID;
+    private MessageAdapter.OnLongClickListener Listener;
 
-    public MessageAdapter(List<Messages> userMessagesList)
+    public MessageAdapter(List<Messages> userMessagesList, String id)
     {
         this.userMessagesList = userMessagesList;
+        this.ID = id;
+    }
+
+    public interface OnLongClickListener {
+        void onLongClickListener(final int position);
+    }
+
+    public void onLongClickListener(MessageAdapter.OnLongClickListener onLongClickListener) {
+        Listener= onLongClickListener;
     }
 
     public class MessageViewHolder extends RecyclerView.ViewHolder
@@ -35,7 +50,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public LinearLayout send;
         public LinearLayout receive;
 
-        public MessageViewHolder(@NonNull View itemView)
+        public MessageViewHolder(@NonNull View itemView, OnLongClickListener listener)
         {
             super(itemView);
 
@@ -49,6 +64,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             send = itemView.findViewById(R.id.send);
             receive = itemView.findViewById(R.id.receive);
+
+            send.setOnLongClickListener(v -> {
+                if(listener != null){
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION ){
+                        listener.onLongClickListener(position);
+                    }
+                }
+                return true;
+            });
         }
     }
 
@@ -58,7 +83,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_messages_layout, parent, false);
         mAuth = FirebaseAuth.getInstance();
-        return new MessageViewHolder(view);
+        return new MessageViewHolder(view, Listener);
     }
 
 
@@ -156,55 +181,124 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
         }
 
-//        if (fromUserID.equals(messageSenderID))
-//        {
-//            holder.itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v)
-//                {
-//                    if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx"))
-//                    {
-//                        CharSequence options[] = new  CharSequence[]
-//                                {
-//                                        "Delete for me",
-//                                        "Download and View This Document",
-//                                        "Cancel",
-//                                        "Delete for Everyone"
-//                                };
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-//                        builder.setTitle("Delete Message?");
-//                        builder.setItems(options, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which)
-//                            {
-//                                if (which == 0)
-//                                {
-//                                    deleteSentMessages(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//                                else if (which == 1)
-//                                {
-//                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//                                else if (which == 3)
-//                                {
-//                                    deleteMessageForEveryone(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//
-//                            }
-//                        });
-//                        builder.show();
-//                    }
+        if (fromUserID.equals(messageSenderID))
+        {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx"))
+                    {
+                        CharSequence options[] = new  CharSequence[]
+                                {
+                                        "Download and View This Document",
+                                        "Delete for Everyone"
+                                };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        //builder.setTitle("Delete Message?");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                if (which == 0)
+                                {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
+                                    holder.itemView.getContext().startActivity(intent);
+                                }
+                                else if (which == 1)
+                                {
+                                    deleteMessageForEveryone(position, holder);
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+                    else if (userMessagesList.get(position).getType().equals("text"))
+                    {
+                        CharSequence options[] = new  CharSequence[]
+                                {
+                                        "Delete for Everyone"
+                                };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        //builder.setTitle("Delete Message?");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                if (which == 0)
+                                {
+                                    deleteMessageForEveryone(position, holder);
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+                    else if (userMessagesList.get(position).getType().equals("image"))
+                    {
+                        CharSequence options[] = new  CharSequence[]
+                                {
+                                        "View This Image",
+                                        "Delete for Everyone"
+                                };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        //builder.setTitle("Delete Message?");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                if (which == 0)
+                                {
+                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
+                                    intent.putExtra("url", userMessagesList.get(position).getImage());
+                                    holder.itemView.getContext().startActivity(intent);
+                                }
+                                else if (which == 1)
+                                {
+                                    deleteMessageForEveryone(position, holder);
+
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+                }
+            });
+        }
+        else
+        {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx"))
+                    {
+                        CharSequence options[] = new  CharSequence[]
+                                {
+                                        "Download and View This Document"
+                                };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        //builder.setTitle("Delete Message?");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                if (which == 0)
+                                {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
+                                    holder.itemView.getContext().startActivity(intent);
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
 //                    else if (userMessagesList.get(position).getType().equals("text"))
 //                    {
 //                        CharSequence options[] = new  CharSequence[]
 //                                {
-//                                        "Delete for me",
-//                                        "Cancel",
 //                                        "Delete for Everyone"
 //                                };
 //                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
@@ -215,12 +309,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //                            {
 //                                if (which == 0)
 //                                {
-//                                    deleteSentMessages(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//                                else if (which == 2)
-//                                {
 //                                    deleteMessageForEveryone(position, holder);
 //                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
 //                                    holder.itemView.getContext().startActivity(intent);
@@ -230,141 +318,39 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //                        });
 //                        builder.show();
 //                    }
-//                    else if (userMessagesList.get(position).getType().equals("image"))
-//                    {
-//                        CharSequence options[] = new  CharSequence[]
-//                                {
-//                                        "Delete for me",
-//                                        "View This Image",
-//                                        "Cancel",
-//                                        "Delete for Everyone"
-//                                };
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-//                        builder.setTitle("Delete Message?");
-//                        builder.setItems(options, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which)
-//                            {
-//                                if (which == 0)
-//                                {
-//                                    deleteSentMessages(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//                                else if (which == 1)
-//                                {
-//                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
-//                                    intent.putExtra("url", userMessagesList.get(position).getMessage());
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//                                else if (which == 3)
-//                                {
-//                                    deleteMessageForEveryone(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//
-//                            }
-//                        });
-//                        builder.show();
-//                    }
-//                }
-//            });
-//        }
-//        else
-//        {
-//            holder.itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v)
-//                {
-//                    if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx"))
-//                    {
-//                        CharSequence options[] = new  CharSequence[]
-//                                {
-//                                        "Delete for me",
-//                                        "Download and View This Document",
-//                                        "Cancel"
-//                                };
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-//                        builder.setTitle("Delete Message?");
-//                        builder.setItems(options, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which)
-//                            {
-//                                if (which == 0)
-//                                {
-//                                    deleteReceivedMessages(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//                                else if (which == 1)
-//                                {
-//                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//
-//                            }
-//                        });
-//                        builder.show();
-//                    }
-//                    else if (userMessagesList.get(position).getType().equals("text"))
-//                    {
-//                        CharSequence options[] = new  CharSequence[]
-//                                {
-//                                        "Delete for me",
-//                                        "Cancel"
-//                                };
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-//                        builder.setTitle("Delete Message?");
-//                        builder.setItems(options, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which)
-//                            {
-//                                if (which == 0)
-//                                {
-//                                    deleteReceivedMessages(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//
-//                            }
-//                        });
-//                        builder.show();
-//                    }
-//                    else if (userMessagesList.get(position).getType().equals("image"))
-//                    {
-//                        CharSequence options[] = new  CharSequence[]
-//                                {
-//                                        "Delete for me",
-//                                        "View This Image",
-//                                        "Cancel"
-//                                };
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-//                        builder.setTitle("Delete Message?");
-//                        builder.setItems(options, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which)
-//                            {
-//                                if (which == 0)
-//                                {
-//                                    deleteReceivedMessages(position, holder);
-//                                    Intent intent = new Intent(holder.itemView.getContext(), MainActivity.class);
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//                                else if (which == 1)
-//                                {
-//                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
-//                                    intent.putExtra("url", userMessagesList.get(position).getMessage());
-//                                    holder.itemView.getContext().startActivity(intent);
-//                                }
-//
-//                            }
-//                        });
-//                        builder.show();
-//                    }
-//                }
-//            });
-//        }
+                    else if (userMessagesList.get(position).getType().equals("image"))
+                    {
+                        CharSequence options[] = new  CharSequence[]
+                                {
+                                        "View This Image",
+                                        "Download Image"
+                                };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        //builder.setTitle("Delete Message?");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+
+                                if (which == 0)
+                                {
+                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
+                                    intent.putExtra("url", userMessagesList.get(position).getImage());
+                                    holder.itemView.getContext().startActivity(intent);
+                                }
+
+                                else if (which == 1)
+                                {
+                                    //Save to Device from Campus24
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+                }
+            });
+        }
    }
 
 
@@ -375,74 +361,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return userMessagesList.size();
     }
 
-//    private void deleteSentMessages(final int position , final MessageViewHolder holder)
-//    {
-//        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-//        rootRef.child("Messages").child(userMessagesList.get(position).getFrom()).child(userMessagesList.get(position).getTo()).child(userMessagesList.get(position).getMessageID()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task)
-//            {
-//                if (task.isSuccessful())
-//                {
-//                    Toast.makeText(holder.itemView.getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    Toast.makeText(holder.itemView.getContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//    }
 
-//    private void deleteReceivedMessages(final int position , final MessageViewHolder holder)
-//    {
-//        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-//        rootRef.child("Messages").child(userMessagesList.get(position).getTo()).child(userMessagesList.get(position).getFrom()).child(userMessagesList.get(position).getMessageID()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task)
-//            {
-//                if (task.isSuccessful())
-//                {
-//                    Toast.makeText(holder.itemView.getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    Toast.makeText(holder.itemView.getContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//    }
-
-//    private void deleteMessageForEveryone(final int position , final MessageViewHolder holder)
-//    {
-//        final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-//        rootRef.child("Messages").child(userMessagesList.get(position).getTo()).child(userMessagesList.get(position).getFrom()).child(userMessagesList.get(position).getMessageID()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task)
-//            {
-//                if (task.isSuccessful())
-//                {
-//                    rootRef.child("Messages").child(userMessagesList.get(position).getFrom()).child(userMessagesList.get(position).getTo()).child(userMessagesList.get(position).getMessageID()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task)
-//                        {
-//                            if (task.isSuccessful()) {
-//                                Toast.makeText(holder.itemView.getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//
-//                }
-//                else
-//                {
-//                    Toast.makeText(holder.itemView.getContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//    }
+    private void deleteMessageForEveryone(final int position , final MessageViewHolder holder)
+    {
+        FirebaseFirestore.getInstance().document("Rooms/"+ ID+"/Messages/"+userMessagesList.get(position).getDocID())
+                .delete();
+    }
 
 
 }

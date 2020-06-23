@@ -91,11 +91,6 @@ public class ChatActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         messageSenderID = mAuth.getCurrentUser().getUid();
-        //RootRef = FirebaseDatabase.getInstance().getReference();
-
-//        messageReceiverID = getIntent().getExtras().get("visit_user_id").toString();
-//        messageReceiverName = getIntent().getExtras().get("visit_user_name").toString();
-//        messageReceiverImage = getIntent().getExtras().get("visit_image").toString();
 
        InitializeControllers();
 
@@ -177,6 +172,7 @@ public class ChatActivity extends AppCompatActivity {
                                 switch (dc.getType()) {
                                     case ADDED:
                                         Messages messages = dc.getDocument().toObject(Messages.class);
+                                        messages.setDocID(dc.getDocument().getId());
                                         messagesList.add(messages);
                                         messageAdapter.notifyDataSetChanged();
                                         userMessagesList.clearOnScrollListeners();
@@ -185,44 +181,16 @@ public class ChatActivity extends AppCompatActivity {
                                     case MODIFIED:
                                         break;
                                     case REMOVED:
+                                        Messages messagesDel = dc.getDocument().toObject(Messages.class);
+                                        messagesDel.setDocID(dc.getDocument().getId());
+                                        messagesList.remove(messagesDel);
+                                        messageAdapter.notifyDataSetChanged();
                                         break;
 
                                 }
                             }
                     }
                 });
-
-//        RootRef.child("Messages").child(messageSenderID).child(messageReceiverID).addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s)
-//            {
-//                Messages messages = dataSnapshot.getValue(Messages.class);
-//                messagesList.add(messages);
-//                messageAdapter.notifyDataSetChanged();
-//                userMessagesList.clearOnScrollListeners();
-//                userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
 
     }
 
@@ -246,12 +214,19 @@ public class ChatActivity extends AppCompatActivity {
         SendFilesButton = findViewById(R.id.send_files_btn);
         MessageInputText = findViewById(R.id.input_message);
 
-        messageAdapter = new MessageAdapter(messagesList);
-
+        messageAdapter = new MessageAdapter(messagesList, getIntent().getStringExtra("ID"));
         userMessagesList = (RecyclerView) findViewById(R.id.private_messages_list_of_users);
         linearLayoutManager = new LinearLayoutManager(this);
         userMessagesList.setLayoutManager(linearLayoutManager);
         userMessagesList.setAdapter(messageAdapter);
+
+        messageAdapter.onLongClickListener((position) ->
+        {
+            Messages messages = new Messages();
+
+            messagesList.remove(position);
+            messageAdapter.notifyItemRemoved(position);
+        });
 
         Calendar calendar = Calendar.getInstance();
 

@@ -1,8 +1,10 @@
 package com.applex.chatting;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 
+@IgnoreExtraProperties
 public class Messages
 {
     private  String fromUid, message, type, image, document;
@@ -10,9 +12,19 @@ public class Messages
 
     private boolean seen;
 
+    private String docID;
+
     Messages()
     {
 
+    }
+
+    public String getDocID() {
+        return docID;
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
     }
 
     public String getFromUid() {
