@@ -1,7 +1,10 @@
 package com.applex.chatting;
 
+import com.google.firebase.Timestamp;
+
 public class ChatRoomModel {
     private String lastMessage, receiver, receiverDP, roomID, receiverUid;
+    private Timestamp timestamp;
 
     public ChatRoomModel() {
     }
@@ -12,6 +15,14 @@ public class ChatRoomModel {
 
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getReceiver() {

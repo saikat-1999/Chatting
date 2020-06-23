@@ -5,7 +5,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 public class Messages
 {
-    private  String from, message, type, name;
+    private  String fromUid, message, type, image;
     @ServerTimestamp private Timestamp timestamp;
 
     private boolean seen;
@@ -15,12 +15,12 @@ public class Messages
 
     }
 
-    public String getFrom() {
-        return from;
+    public String getFromUid() {
+        return fromUid;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setFromUid(String fromUid) {
+        this.fromUid = fromUid;
     }
 
     public String getMessage() {
@@ -39,12 +39,12 @@ public class Messages
         this.type = type;
     }
 
-    public String getName() {
-        return name;
+    public String getImage() {
+        return image;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Timestamp getTimestamp() {
