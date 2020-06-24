@@ -286,7 +286,7 @@ public class ChatActivity extends AppCompatActivity {
                                 Messages messages = new Messages();
                                 messages.setDocument(downloadUrl);
                                 messages.setFromUid(FirebaseAuth.getInstance().getUid());
-                                messages.setSeen(false);
+                                messages.setSeen(0);
                                 messages.setType(checker);
                                 FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
                                         .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -461,9 +461,19 @@ public class ChatActivity extends AppCompatActivity {
 //    }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     private void SendMessage(){
@@ -474,12 +484,10 @@ public class ChatActivity extends AppCompatActivity {
             Toast.makeText(this, "first write your meassage...", Toast.LENGTH_SHORT).show();
         }
         else{
-
-
             Messages messages = new Messages();
             messages.setMessage(messageText);
             messages.setFromUid(FirebaseAuth.getInstance().getUid());
-            messages.setSeen(false);
+            messages.setSeen(0);
             messages.setType("text");
             FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages/").document()
                     .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -651,7 +659,7 @@ public class ChatActivity extends AppCompatActivity {
                                     Messages messages = new Messages();
                                     messages.setImage(generatedFilePath);
                                     messages.setFromUid(FirebaseAuth.getInstance().getUid());
-                                    messages.setSeen(false);
+                                    messages.setSeen(0);
                                     messages.setType(checker);
                                     FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
                                             .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -109,6 +109,7 @@ public class ChatsFragment extends Fragment {
                 chatsViewHolder.userName.setText(chats.getReceiver());
                 Picasso.get().load(chats.getReceiverDP()).placeholder(R.drawable.ic_baseline_person_24).into(chatsViewHolder.profileImage);
 
+
                 chatsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
