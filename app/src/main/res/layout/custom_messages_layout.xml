@@ -34,6 +34,8 @@
             android:layout_height="wrap_content"
             android:text="receiver messages here"
             android:textSize="14sp"
+            android:autoLink="all"
+            android:textColorLink="@color/design_default_color_secondary"
             android:textColor="@android:color/black"/>
 
         <TextView
@@ -100,6 +102,8 @@
             android:layout_height="wrap_content"
             android:text="sender messages"
             android:textSize="14sp"
+            android:autoLink="all"
+            android:textColorLink="@color/design_default_color_secondary"
             android:textColor="@android:color/black"/>
 
         <TextView
