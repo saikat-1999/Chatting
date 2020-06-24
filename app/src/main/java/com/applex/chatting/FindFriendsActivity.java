@@ -88,6 +88,8 @@ public class FindFriendsActivity extends AppCompatActivity {
                                         ChatRoomModel roomModel = task.getResult().toObject(ChatRoomModel.class);
                                         Intent intent = new Intent(FindFriendsActivity.this,ChatActivity.class);
                                         intent.putExtra("ID",roomModel.getRoomID());
+                                        intent.putExtra("Name",userModel.getName());
+                                        intent.putExtra("DP",userModel.getImage());
                                         startActivity(intent);
                                     }
                                     else {
@@ -101,7 +103,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                                         chatRoomModel1.setReceiverUid(userModel.getUid());
                                         chatRoomModel1.setRoomID(RoomID);
                                         chatRoomModel2.setRoomID(RoomID);
-                                        chatRoomModel2.setReceiver("Saikat");//Current User
+                                        chatRoomModel2.setReceiver("Sourajit");//Current User
                                         chatRoomModel2.setReceiverUid(FirebaseAuth.getInstance().getUid());
                                         chatRoomModel2.setReceiverDP("abc");
                                         chatRoomModel2.setLastMessage("hi");
@@ -118,6 +120,9 @@ public class FindFriendsActivity extends AppCompatActivity {
                                                     Toast.makeText(getApplicationContext(),RoomID, Toast.LENGTH_SHORT).show();
                                                     Intent intent = new Intent(FindFriendsActivity.this,ChatActivity.class);
                                                     intent.putExtra("ID", RoomID);
+                                                    intent.putExtra("Name",userModel.getName());
+                                                    intent.putExtra("DP",userModel.getImage());
+                                                    startActivity(intent);
                                                 }
                                                 else
                                                 {
