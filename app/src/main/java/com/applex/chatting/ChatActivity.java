@@ -46,6 +46,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -94,8 +95,8 @@ public class ChatActivity extends AppCompatActivity {
 
        InitializeControllers();
 
-//       userName.setText(messageReceiverName);
-//        Picasso.get().load(messageReceiverImage).placeholder(R.drawable.ic_baseline_person_24).into(userImage);
+       userName.setText(getIntent().getStringExtra("Name"));
+        Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_baseline_person_24).into(userImage);
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override

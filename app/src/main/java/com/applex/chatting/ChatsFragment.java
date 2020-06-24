@@ -87,7 +87,8 @@ public class ChatsFragment extends Fragment {
                     public void onClick(View v) {
                         Intent intent = new Intent(getContext(),ChatActivity.class);
                         intent.putExtra("ID",chats.getRoomID());
-
+                        intent.putExtra("Name",chats.getReceiver());
+                        intent.putExtra("DP",chats.getReceiverDP());
                         startActivity(intent);
                     }
                 });
