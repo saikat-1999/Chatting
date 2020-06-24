@@ -7,7 +7,7 @@ public class ChatRoomModel {
 
     private Timestamp timestamp;//Last Message Timestamp
 
-    private boolean blocked;
+    private long blocked;
 
     public ChatRoomModel() {
     }
@@ -28,11 +28,11 @@ public class ChatRoomModel {
         this.timestamp = timestamp;
     }
 
-    public boolean isBlocked() {
+    public long getBlocked() {
         return blocked;
     }
 
-    public void setBlocked(boolean blocked) {
+    public void setBlocked(long blocked) {
         this.blocked = blocked;
     }
 
