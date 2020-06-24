@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatImageView">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:background="#000"
+        android:adjustViewBounds="true"
+        android:id="@+id/imageView"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="#aa000000"
+        android:gravity="start">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:padding="15dp"
+            android:src="@drawable/ic_arrow_back_white_24dp"/>
+
+        <ImageView
+            android:id="@+id/crop"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:padding="15dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_baseline_crop_24"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aa000000"
+        android:layout_alignParentBottom="true"
+        android:gravity="start">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type here..."
+            android:gravity="center_vertical"
+            android:paddingHorizontal="15dp"
+            android:textColorHint="#aaffffff"
+            android:maxLines="6"
+            android:textColor="#fff"
+            android:minHeight="55dp"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

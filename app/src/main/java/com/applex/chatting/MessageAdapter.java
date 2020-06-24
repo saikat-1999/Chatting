@@ -49,35 +49,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolder extends RecyclerView.ViewHolder
     {
         public TextView senderMessageText, receiverMessageText, senderTime, receiverTime, docName;
-        //public CircleImageView receiverProfileImage;
         public ImageView messageSenderPicture, messageReceiverPicture;
         public CardView senderPicCard, recPicCard, senderDocCard, recDocCard;
         public LinearLayout send;
         public LinearLayout receive;
-        ApplexLinkPreviewShort LinkPreviewSender, LinkPreviewReceiver;
-
-
+        ApplexLinkPreviewShort senderLink, receiverLink;
 
         public MessageViewHolder(@NonNull View itemView, OnLongClickListener listener)
         {
             super(itemView);
-
-            senderMessageText = (TextView) itemView.findViewById(R.id.sender_message_text);
-            receiverMessageText = (TextView) itemView.findViewById(R.id.receiver_message_text);
-            senderPicCard = itemView.findViewById(R.id.senderPicCard);
-            recPicCard= itemView.findViewById(R.id.recPicCard);
+            senderLink = itemView.findViewById(R.id.LinkPreViewSender);
+            receiverLink = itemView.findViewById(R.id.LinkPreViewReceiver);
+            senderMessageText = itemView.findViewById(R.id.sender_message_text);
+            receiverMessageText = itemView.findViewById(R.id.receiver_message_text);
             senderDocCard= itemView.findViewById(R.id.senderDocCard);
             recDocCard =  itemView.findViewById(R.id.recDocCard);
             docName = itemView.findViewById(R.id.docname);
-            //receiverProfileImage = (CircleImageView) itemView.findViewById(R.id.message_profile_image);
-            messageReceiverPicture = (ImageView) itemView.findViewById(R.id.message_receiver_image_view);
-            messageSenderPicture = (ImageView) itemView.findViewById(R.id.message_sender_image_view);
+            messageReceiverPicture = itemView.findViewById(R.id.message_receiver_image_view);
+            messageSenderPicture = itemView.findViewById(R.id.message_sender_image_view);
             senderTime = itemView.findViewById(R.id.sender_timestamp);
             receiverTime = itemView.findViewById(R.id.receiver_timestamp);
-            LinkPreviewSender = itemView.findViewById(R.id.LinkPreViewSender);
-            LinkPreviewReceiver = itemView.findViewById(R.id.LinkPreViewReceiver);
+
             send = itemView.findViewById(R.id.send);
             receive = itemView.findViewById(R.id.receive);
+
+            senderPicCard = itemView.findViewById(R.id.send_card_pic);
+            recPicCard =  itemView.findViewById(R.id.receive_card_pic);
 
             send.setOnLongClickListener(v -> {
                 if(listener != null){
@@ -134,10 +131,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //        holder.receiverMessageText.setVisibility(View.GONE);
 //        holder.receiverProfileImage.setVisibility(View.GONE);
 //        holder.senderMessageText.setVisibility(View.GONE);
-        holder.senderPicCard.setVisibility(View.GONE);
-        holder.recPicCard.setVisibility(View.GONE);
         holder.send.setVisibility(View.GONE);
         holder.receive.setVisibility(View.GONE);
+        holder.senderPicCard.setVisibility(View.GONE);
+        holder.recPicCard.setVisibility(View.GONE);
 
         if (fromMessageType.equals("text"))
         {
@@ -145,13 +142,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             {
                 holder.send.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setVisibility(View.VISIBLE);
-                //holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                 holder.senderMessageText.setText(messages.getMessage());
                 if(holder.senderMessageText.getUrls().length>0){
                     URLSpan urlSnapItem = holder.senderMessageText.getUrls()[0];
                     String url = urlSnapItem.getURL();
                     if(url.contains("http")){
-                        holder.LinkPreviewSender.setLink(url ,new ViewListener() {
+                        holder.senderLink.setLink(url ,new ViewListener() {
                             @Override
                             public void onSuccess(boolean status) {
 
@@ -164,8 +160,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     }
 
                 }
-                //holder.senderTime.setText(messages.getTimestamp().toDate().toString());
-
             }
             else
             {
@@ -178,7 +172,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     URLSpan urlSnapItem = holder.receiverMessageText.getUrls()[0];
                     String url = urlSnapItem.getURL();
                     if(url.contains("http")){
-                        holder.LinkPreviewReceiver.setLink(url ,new ViewListener() {
+                        holder.receiverLink.setLink(url ,new ViewListener() {
                             @Override
                             public void onSuccess(boolean status) {
 
@@ -199,15 +193,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         {
             if (fromUserID.equals(messageSenderID))
             {
+                holder.send.setVisibility(View.VISIBLE);
                 holder.senderPicCard.setVisibility(View.VISIBLE);
-
+                holder.messageSenderPicture.setVisibility(View.VISIBLE);
                 Picasso.get().load(messages.getImage()).into(holder.messageSenderPicture);
             }
             else
             {
-                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.receive.setVisibility(View.VISIBLE);
                 holder.recPicCard.setVisibility(View.VISIBLE);
-
+                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
                 Picasso.get().load(messages.getImage()).into(holder.messageReceiverPicture);
             }
         }
