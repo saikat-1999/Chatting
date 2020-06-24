@@ -77,10 +77,32 @@ public class ChatsFragment extends Fragment {
             {
 //                final String usersIDs = getRef(i).getKey();
 //                final String[] retImage = {"defaultimage"};
+                DocumentReference docref = FirebaseFirestore.getInstance().collection("Users").document(chats.getReceiverUid());
+                docref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task)
+                    {
+                        if (task.isSuccessful())
+                        {
+                            UserModel userModel = task.getResult().toObject(UserModel.class);
+                            if (userModel.isOnline())
+                            {
+                                chatsViewHolder.online.setVisibility(View.VISIBLE);
+                            }
+                            else
+                            {
+                                chatsViewHolder.online.setVisibility(View.INVISIBLE);
+                            }
+                        }
+
+                    }
+                });
+
 
                 chatsViewHolder.userName.setText(chats.getReceiver());
                 chatsViewHolder.userStatus.setText(chats.getLastMessage());
                 Picasso.get().load(chats.getReceiverDP()).placeholder(R.drawable.ic_baseline_person_24).into(chatsViewHolder.profileImage);
+
 
                 chatsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
