@@ -142,7 +142,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         {
             if (fromUserID.matches(messageSenderID))
             {
-                SimpleDateFormat sfd = new SimpleDateFormat("HH:mm a, ");
+                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
                 String date = sfd.format(messages.getTimestamp().toDate());
                 holder.senderTime.setText(date);
                 holder.send.setVisibility(View.VISIBLE);
@@ -169,6 +169,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
             else
             {
+                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                String date = sfd.format(messages.getTimestamp().toDate());
+                holder.receiverTime.setText(date);
                 holder.receive.setVisibility(View.VISIBLE);
                 holder.receiverMessageText.setVisibility(View.VISIBLE);
                 holder.receiverMessageText.setText(messages.getMessage());
@@ -196,6 +199,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         {
             if (fromUserID.equals(messageSenderID))
             {
+                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                String date = sfd.format(messages.getTimestamp().toDate());
+                holder.senderTime.setText(date);
                 holder.send.setVisibility(View.VISIBLE);
                 holder.senderPicCard.setVisibility(View.VISIBLE);
                 holder.messageSenderPicture.setVisibility(View.VISIBLE);
@@ -203,6 +209,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
             else
             {
+                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                String date = sfd.format(messages.getTimestamp().toDate());
+                holder.receiverTime.setText(date);
                 holder.receive.setVisibility(View.VISIBLE);
                 holder.recPicCard.setVisibility(View.VISIBLE);
                 holder.messageReceiverPicture.setVisibility(View.VISIBLE);
