@@ -72,9 +72,6 @@ public class RequestsFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final RequestsViewHolder requestsViewHolder, int i, @NonNull Contacts contacts)
             {
-                   requestsViewHolder.itemView.findViewById(R.id.request_accept_btn).setVisibility(View.VISIBLE);
-                   requestsViewHolder.itemView.findViewById(R.id.request_cancel_btn).setVisibility(View.VISIBLE);
-
 
                    final String list_user_id = getRef(i).getKey();
 
@@ -202,10 +199,9 @@ public class RequestsFragment extends Fragment {
                                     });
                                 }
                                 else if(type.equals("sent")){
-                                    Button request_sent_btn = requestsViewHolder.itemView.findViewById(R.id.request_accept_btn);
-                                    request_sent_btn.setText("Req Sent");
+//                                    Button request_sent_btn = requestsViewHolder.itemView.findViewById(R.id.request_accept_btn);
+//                                    request_sent_btn.setText("Req Sent");
 
-                                    requestsViewHolder.itemView.findViewById(R.id.request_cancel_btn).setVisibility(View.INVISIBLE);
 
                                     UsersRef.child(list_user_id).addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -312,8 +308,8 @@ public class RequestsFragment extends Fragment {
             userName = itemView.findViewById(R.id.user_profile_name);
             userStatus = itemView.findViewById(R.id.user_status);
             profileImage = itemView.findViewById(R.id.users_profile_image);
-            AcceptButton = itemView.findViewById(R.id.request_accept_btn);
-            CancelButton = itemView.findViewById(R.id.request_cancel_btn);
+//            AcceptButton = itemView.findViewById(R.id.request_accept_btn);
+//            CancelButton = itemView.findViewById(R.id.request_cancel_btn);
 
         }
     }

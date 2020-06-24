@@ -10,13 +10,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="@drawable/receiver_messages_layout"
-        android:paddingHorizontal="10dp"
         android:paddingVertical="5dp"
         android:layout_marginEnd="30dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="2dp"
         android:elevation="2dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:gravity="center_vertical|start"
         android:orientation="vertical">
 
@@ -25,7 +24,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="3dp"
-            android:layout_marginVertical="5dp">
+            android:visibility="gone"
+            app:cardElevation="0dp"
+            android:layout_margin="5dp">
 
             <ImageView
                 android:id="@+id/message_receiver_image_view"
@@ -40,7 +41,9 @@
         <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
             android:id="@+id/LinkPreViewReceiver"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:minHeight="80dp"/>
 
         <TextView
             android:id="@+id/receiver_message_text"
@@ -49,6 +52,7 @@
             android:text="receiver messages here"
             android:textSize="14sp"
             android:autoLink="all"
+            android:paddingHorizontal="10dp"
             android:textColorLink="@color/design_default_color_secondary"
             android:textColor="@android:color/black"/>
 
@@ -59,6 +63,7 @@
             android:text="10/10/10"
             android:paddingTop="4dp"
             android:textSize="12sp"
+            android:paddingHorizontal="10dp"
             android:textColor="#868686"/>
     </LinearLayout>
 
@@ -70,7 +75,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/sender_messages_layout"
-        android:paddingHorizontal="10dp"
         android:paddingVertical="5dp"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="30dp"
@@ -85,7 +89,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="3dp"
-            android:layout_marginVertical="5dp">
+            android:visibility="gone"
+            app:cardElevation="0dp"
+            android:layout_margin="5dp">
 
             <ImageView
                 android:id="@+id/message_sender_image_view"
@@ -99,7 +105,9 @@
         <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
             android:id="@+id/LinkPreViewSender"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:minHeight="82dp" />
 
         <TextView
             android:id="@+id/sender_message_text"
@@ -107,18 +115,20 @@
             android:layout_height="wrap_content"
             android:text="sender messages"
             android:textSize="14sp"
+            android:paddingHorizontal="10dp"
             android:autoLink="all"
             android:textColorLink="@color/design_default_color_secondary"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/white"/>
 
         <TextView
             android:id="@+id/sender_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="10/10/10"
+            android:paddingHorizontal="10dp"
             android:textSize="12sp"
             android:paddingTop="4dp"
-            android:textColor="#868686"/>
+            android:textColor="#aaffffff"/>
 
     </LinearLayout>
 

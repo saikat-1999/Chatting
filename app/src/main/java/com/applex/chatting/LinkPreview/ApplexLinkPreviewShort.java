@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 //import com.bytera.campus24.R;
+import androidx.cardview.widget.CardView;
+
 import com.applex.chatting.R;
 import com.squareup.picasso.Picasso;
 
@@ -29,7 +31,7 @@ public class ApplexLinkPreviewShort extends RelativeLayout {
     Context context;
     private MetaData meta;
 
-    LinearLayout linearLayout;
+    CardView linearLayout;
     ImageView imageView;
     TextView textViewTitle;
     TextView textViewDesp;
@@ -73,7 +75,7 @@ public class ApplexLinkPreviewShort extends RelativeLayout {
             inflate(context, R.layout.link_preview_short_layout,this);
         }
 
-        linearLayout = (LinearLayout) findViewById(R.id.rich_link_card);
+        linearLayout = findViewById(R.id.rich_link_card);
         imageView = (ImageView) findViewById(R.id.rich_link_image);
         textViewTitle = (TextView) findViewById(R.id.rich_link_title);
         textViewDesp = (TextView) findViewById(R.id.rich_link_desp);
