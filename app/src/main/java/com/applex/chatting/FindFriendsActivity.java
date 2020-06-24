@@ -118,6 +118,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                                                     Toast.makeText(getApplicationContext(),RoomID, Toast.LENGTH_SHORT).show();
                                                     Intent intent = new Intent(FindFriendsActivity.this,ChatActivity.class);
                                                     intent.putExtra("ID", RoomID);
+                                                    startActivity(intent);
                                                 }
                                                 else
                                                 {
