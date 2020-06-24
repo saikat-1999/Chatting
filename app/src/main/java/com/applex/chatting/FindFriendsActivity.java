@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
@@ -46,7 +47,7 @@ public class FindFriendsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_friends);
 
-        UsersRef = FirebaseFirestore.getInstance().collection("Users");
+        UsersRef = FirebaseFirestore.getInstance().collection("Users").limitToLast(10);
 
         FindFriendsRecyclerList = (RecyclerView) findViewById(R.id.find_friends_recycler_list);
         FindFriendsRecyclerList.setLayoutManager(new LinearLayoutManager(this));
@@ -76,40 +77,60 @@ public class FindFriendsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v)
                     {
-                        final String RoomID;
-                        RoomID = getAlphaNumericString(20);
-                        ChatRoomModel chatRoomModel1 = new ChatRoomModel();
-                        ChatRoomModel chatRoomModel2 = new ChatRoomModel();
-                        chatRoomModel1.setLastMessage("Hello");
-                        chatRoomModel1.setReceiver(userModel.getName());
-                        chatRoomModel1.setReceiverDP(userModel.getImage());
-                        chatRoomModel1.setReceiverUid(userModel.getUid());
-                        chatRoomModel1.setRoomID(RoomID);
-                        chatRoomModel2.setRoomID(RoomID);
-                        chatRoomModel2.setReceiver("Saikat");//Current User
-                        chatRoomModel2.setReceiverUid(FirebaseAuth.getInstance().getUid());
-                        chatRoomModel2.setReceiverDP("abc");
-                        chatRoomModel2.setLastMessage("hi");
-                        DocumentReference doc1 = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).collection("ChatRooms").document(userModel.getUid());
-                        DocumentReference doc2 = FirebaseFirestore.getInstance().collection("Users").document(userModel.getUid()).collection("ChatRooms").document(FirebaseAuth.getInstance().getUid());
-                        WriteBatch batch = FirebaseFirestore.getInstance().batch();
-                        batch.set(doc1, chatRoomModel1);
-                        batch.set(doc2, chatRoomModel2);
-//                        batch.set(FirebaseFirestore.getInstance().collection("Rooms").document("abcd123"), null);
-                        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        FirebaseFirestore.getInstance()
+                                .collection("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms")
+                                .document(userModel.getUid())
+                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful())
-                                {
-                                    Toast.makeText(getApplicationContext(),RoomID, Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(getApplicationContext(),"nikal", Toast.LENGTH_SHORT).show();
-                                }
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    if(task.getResult().exists()){
+                                        ChatRoomModel roomModel = task.getResult().toObject(ChatRoomModel.class);
+                                        Intent intent = new Intent(FindFriendsActivity.this,ChatActivity.class);
+                                        intent.putExtra("ID",roomModel.getRoomID());
+                                        startActivity(intent);
+                                    }
+                                    else {
+                                        final String RoomID;
+                                        RoomID = getAlphaNumericString(20);
+                                        ChatRoomModel chatRoomModel1 = new ChatRoomModel();
+                                        ChatRoomModel chatRoomModel2 = new ChatRoomModel();
+                                        chatRoomModel1.setLastMessage("Hello");
+                                        chatRoomModel1.setReceiver(userModel.getName());
+                                        chatRoomModel1.setReceiverDP(userModel.getImage());
+                                        chatRoomModel1.setReceiverUid(userModel.getUid());
+                                        chatRoomModel1.setRoomID(RoomID);
+                                        chatRoomModel2.setRoomID(RoomID);
+                                        chatRoomModel2.setReceiver("Saikat");//Current User
+                                        chatRoomModel2.setReceiverUid(FirebaseAuth.getInstance().getUid());
+                                        chatRoomModel2.setReceiverDP("abc");
+                                        chatRoomModel2.setLastMessage("hi");
+                                        DocumentReference doc1 = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).collection("ChatRooms").document(userModel.getUid());
+                                        DocumentReference doc2 = FirebaseFirestore.getInstance().collection("Users").document(userModel.getUid()).collection("ChatRooms").document(FirebaseAuth.getInstance().getUid());
+                                        WriteBatch batch = FirebaseFirestore.getInstance().batch();
+                                        batch.set(doc1, chatRoomModel1);
+                                        batch.set(doc2, chatRoomModel2);
+                                        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful())
+                                                {
+                                                    Toast.makeText(getApplicationContext(),RoomID, Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(FindFriendsActivity.this,ChatActivity.class);
+                                                    intent.putExtra("ID", RoomID);
+                                                }
+                                                else
+                                                {
+                                                    Toast.makeText(getApplicationContext(),"Error", Toast.LENGTH_SHORT).show();
+                                                }
 
+                                            }
+                                        });
+                                    }
+                                }
                             }
                         });
+
 
                     }
                 });

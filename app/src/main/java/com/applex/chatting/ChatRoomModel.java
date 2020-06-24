@@ -4,7 +4,8 @@ import com.google.firebase.Timestamp;
 
 public class ChatRoomModel {
     private String lastMessage, receiver, receiverDP, roomID, receiverUid;
-    private Timestamp timestamp;
+
+    private Timestamp timestamp;//Last Message Timestamp
 
     public ChatRoomModel() {
     }

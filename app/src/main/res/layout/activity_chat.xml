@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/darker_gray"
     tools:context=".ChatActivity">
 
     <include
@@ -18,6 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/chat_toolbar"
+        android:background="#dcdcdc"
+
         android:layout_above="@id/chat_linear_layout"
         android:layout_marginBottom="6dp">
 
