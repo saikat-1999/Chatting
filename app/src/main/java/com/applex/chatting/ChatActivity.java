@@ -464,8 +464,6 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
-
-
     }
 
     private void SendMessage(){

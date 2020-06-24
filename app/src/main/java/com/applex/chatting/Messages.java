@@ -10,7 +10,7 @@ public class Messages
     private  String fromUid, message, type, image, document;
     @ServerTimestamp private Timestamp timestamp;
 
-    private boolean seen;
+    private long seen;
 
     private String docID;
 
@@ -75,11 +75,11 @@ public class Messages
         this.timestamp = timestamp;
     }
 
-    public boolean isSeen() {
+    public long getSeen() {
         return seen;
     }
 
-    public void setSeen(boolean seen) {
+    public void setSeen(long seen) {
         this.seen = seen;
     }
 }
