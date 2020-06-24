@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>
@@ -46,8 +48,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Listener= onLongClickListener;
     }
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder
-    {
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+
         public TextView senderMessageText, receiverMessageText, senderTime, receiverTime, docName;
         public ImageView messageSenderPicture, messageReceiverPicture;
         public CardView senderPicCard, recPicCard, senderDocCard, recDocCard;
@@ -140,6 +142,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         {
             if (fromUserID.matches(messageSenderID))
             {
+                SimpleDateFormat sfd = new SimpleDateFormat("HH:mm a, ");
+                String date = sfd.format(messages.getTimestamp().toDate());
+                holder.senderTime.setText(date);
                 holder.send.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setText(messages.getMessage());
@@ -147,6 +152,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     URLSpan urlSnapItem = holder.senderMessageText.getUrls()[0];
                     String url = urlSnapItem.getURL();
                     if(url.contains("http")){
+                        holder.senderLink.setVisibility(View.VISIBLE);
                         holder.senderLink.setLink(url ,new ViewListener() {
                             @Override
                             public void onSuccess(boolean status) {
@@ -163,15 +169,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
             else
             {
-//dara call ese6 ekta RUN KORE DEKH
                 holder.receive.setVisibility(View.VISIBLE);
-                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.receiverMessageText.setVisibility(View.VISIBLE);
                 holder.receiverMessageText.setText(messages.getMessage());
                 if(holder.receiverMessageText.getUrls().length>0){
                     URLSpan urlSnapItem = holder.receiverMessageText.getUrls()[0];
                     String url = urlSnapItem.getURL();
                     if(url.contains("http")){
+                        holder.receiverLink.setVisibility(View.VISIBLE);
                         holder.receiverLink.setLink(url ,new ViewListener() {
                             @Override
                             public void onSuccess(boolean status) {
@@ -183,10 +188,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                             }
                         });
                     }
-
                 }
                 //holder.receiverTime.setText(messages.getTimestamp().toDate().toString());
-
             }
         }
         else if (fromMessageType.equals("image"))
@@ -208,21 +211,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
         else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx"))
         {
-            if (fromUserID.equals(messageSenderID))
-            {
+            if (fromUserID.equals(messageSenderID)) {
                 holder.senderDocCard.setVisibility(View.VISIBLE);
-
-
             }
             else
             {
-                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.recDocCard.setVisibility(View.VISIBLE);
             }
         }
 
-        if (fromUserID.equals(messageSenderID))
-        {
+        if (fromUserID.equals(messageSenderID)) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v)
@@ -235,7 +233,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                                         "Delete for Everyone"
                                 };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        //builder.setTitle("Delete Message?");
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -261,7 +258,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                                         "Delete for Everyone"
                                 };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        //builder.setTitle("Delete Message?");
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
