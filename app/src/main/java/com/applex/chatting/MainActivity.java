@@ -256,12 +256,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (isOnline)
         {
-            FirebaseFirestore.getInstance().document("Users/"+currentUserID).update("isOnline", isOnline);
+            FirebaseFirestore.getInstance().document("Users/"+currentUserID).update("isOnline", 1);
 
         }
         else {
-
-            FirebaseFirestore.getInstance().document("Users/" + currentUserID).update("isOnline", isOnline, "lastSeen", FieldValue.serverTimestamp());
+            FirebaseFirestore.getInstance().document("Users/" + currentUserID).update("isOnline", 0, "lastSeen", FieldValue.serverTimestamp());
         }
 
     }

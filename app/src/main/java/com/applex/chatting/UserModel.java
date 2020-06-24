@@ -7,7 +7,7 @@ public class UserModel {
 
     private String uid, name, status, image;
     @ServerTimestamp private Timestamp lastSeen;
-    private boolean isOnline;
+    private long isOnline;
 
     public String getUid() {
         return uid;
@@ -49,11 +49,11 @@ public class UserModel {
         this.lastSeen = lastSeen;
     }
 
-    public boolean isOnline() {
+    public long getIsOnline() {
         return isOnline;
     }
 
-    public void setOnline(boolean online) {
-        isOnline = online;
+    public void setIsOnline(long isOnline) {
+        this.isOnline = isOnline;
     }
 }
