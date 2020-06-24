@@ -36,6 +36,11 @@
             android:textSize="14sp"
             android:textColor="@android:color/black"/>
 
+        <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
+            android:id="@+id/LinkPreViewReceiver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <TextView
             android:id="@+id/receiver_timestamp"
             android:layout_width="wrap_content"
@@ -85,6 +90,11 @@
             android:text="sender messages"
             android:textSize="14sp"
             android:textColor="@android:color/black"/>
+
+        <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
+            android:id="@+id/LinkPreViewSender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/sender_timestamp"

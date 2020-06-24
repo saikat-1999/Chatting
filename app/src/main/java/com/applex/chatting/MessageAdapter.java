@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.applex.chatting.LinkPreview.ApplexLinkPreviewShort;
+import com.applex.chatting.LinkPreview.ViewListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -49,6 +52,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public ImageView messageSenderPicture, messageReceiverPicture;
         public LinearLayout send;
         public LinearLayout receive;
+        ApplexLinkPreviewShort LinkPreviewSender, LinkPreviewReceiver;
+
+
 
         public MessageViewHolder(@NonNull View itemView, OnLongClickListener listener)
         {
@@ -61,7 +67,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             messageSenderPicture = (ImageView) itemView.findViewById(R.id.message_sender_image_view);
             senderTime = itemView.findViewById(R.id.sender_timestamp);
             receiverTime = itemView.findViewById(R.id.receiver_timestamp);
-
+            LinkPreviewSender = itemView.findViewById(R.id.LinkPreViewSender);
+            LinkPreviewReceiver = itemView.findViewById(R.id.LinkPreViewReceiver);
             send = itemView.findViewById(R.id.send);
             receive = itemView.findViewById(R.id.receive);
 
@@ -133,6 +140,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.senderMessageText.setVisibility(View.VISIBLE);
                 //holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                 holder.senderMessageText.setText(messages.getMessage());
+                if(holder.senderMessageText.getUrls().length>0){
+                    URLSpan urlSnapItem = holder.senderMessageText.getUrls()[0];
+                    String url = urlSnapItem.getURL();
+                    if(url.contains("http")){
+                        holder.LinkPreviewSender.setLink(url ,new ViewListener() {
+                            @Override
+                            public void onSuccess(boolean status) {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                            }
+                        });
+                    }
+
+                }
                 //holder.senderTime.setText(messages.getTimestamp().toDate().toString());
 
             }
@@ -143,6 +167,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.receiverMessageText.setVisibility(View.VISIBLE);
                 holder.receiverMessageText.setText(messages.getMessage());
+                if(holder.receiverMessageText.getUrls().length>0){
+                    URLSpan urlSnapItem = holder.receiverMessageText.getUrls()[0];
+                    String url = urlSnapItem.getURL();
+                    if(url.contains("http")){
+                        holder.LinkPreviewReceiver.setLink(url ,new ViewListener() {
+                            @Override
+                            public void onSuccess(boolean status) {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                            }
+                        });
+                    }
+
+                }
                 //holder.receiverTime.setText(messages.getTimestamp().toDate().toString());
 
             }
