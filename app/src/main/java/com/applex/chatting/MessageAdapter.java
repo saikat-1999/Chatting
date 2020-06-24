@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.applex.chatting.LinkPreview.ApplexLinkPreviewShort;
@@ -47,9 +48,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public class MessageViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView senderMessageText, receiverMessageText, senderTime, receiverTime;
+        public TextView senderMessageText, receiverMessageText, senderTime, receiverTime, docName;
         //public CircleImageView receiverProfileImage;
         public ImageView messageSenderPicture, messageReceiverPicture;
+        public CardView senderPicCard, recPicCard, senderDocCard, recDocCard;
         public LinearLayout send;
         public LinearLayout receive;
         ApplexLinkPreviewShort LinkPreviewSender, LinkPreviewReceiver;
@@ -62,6 +64,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             senderMessageText = (TextView) itemView.findViewById(R.id.sender_message_text);
             receiverMessageText = (TextView) itemView.findViewById(R.id.receiver_message_text);
+            senderPicCard = itemView.findViewById(R.id.senderPicCard);
+            recPicCard= itemView.findViewById(R.id.recPicCard);
+            senderDocCard= itemView.findViewById(R.id.senderDocCard);
+            recDocCard =  itemView.findViewById(R.id.recDocCard);
+            docName = itemView.findViewById(R.id.docname);
             //receiverProfileImage = (CircleImageView) itemView.findViewById(R.id.message_profile_image);
             messageReceiverPicture = (ImageView) itemView.findViewById(R.id.message_receiver_image_view);
             messageSenderPicture = (ImageView) itemView.findViewById(R.id.message_sender_image_view);
@@ -127,8 +134,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //        holder.receiverMessageText.setVisibility(View.GONE);
 //        holder.receiverProfileImage.setVisibility(View.GONE);
 //        holder.senderMessageText.setVisibility(View.GONE);
-        holder.messageSenderPicture.setVisibility(View.GONE);
-        holder.messageReceiverPicture.setVisibility(View.GONE);
+        holder.senderPicCard.setVisibility(View.GONE);
+        holder.recPicCard.setVisibility(View.GONE);
         holder.send.setVisibility(View.GONE);
         holder.receive.setVisibility(View.GONE);
 
@@ -192,14 +199,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         {
             if (fromUserID.equals(messageSenderID))
             {
-                holder.messageSenderPicture.setVisibility(View.VISIBLE);
+                holder.senderPicCard.setVisibility(View.VISIBLE);
 
                 Picasso.get().load(messages.getImage()).into(holder.messageSenderPicture);
             }
             else
             {
                 //holder.receiverProfileImage.setVisibility(View.VISIBLE);
-                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
+                holder.recPicCard.setVisibility(View.VISIBLE);
 
                 Picasso.get().load(messages.getImage()).into(holder.messageReceiverPicture);
             }
@@ -208,17 +215,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         {
             if (fromUserID.equals(messageSenderID))
             {
-                holder.messageSenderPicture.setVisibility(View.VISIBLE);
+                holder.senderDocCard.setVisibility(View.VISIBLE);
 
-                holder.messageSenderPicture.setBackgroundResource(R.drawable.ic_baseline_insert_drive_file_24);
 
             }
             else
             {
                 //holder.receiverProfileImage.setVisibility(View.VISIBLE);
-                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
-
-                holder.messageReceiverPicture.setBackgroundResource(R.drawable.ic_baseline_insert_drive_file_24);
+                holder.recDocCard.setVisibility(View.VISIBLE);
             }
         }
 

@@ -104,7 +104,6 @@ public class ChatActivity extends AppCompatActivity {
                 SendMessage();
             }
         });
-
         //DisplayLastSeen();
 
         SendFilesButton.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +116,7 @@ public class ChatActivity extends AppCompatActivity {
                                "PDF Files",
                                "Ms Word Files"
                         };
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
                 builder.setTitle("Select the File");
 
