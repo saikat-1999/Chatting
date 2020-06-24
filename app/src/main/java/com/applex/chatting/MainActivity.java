@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
 
-            FirebaseFirestore.getInstance().document("Users/" + currentUserID).update("isOnline", isOnline, "lastSeen");
+            FirebaseFirestore.getInstance().document("Users/" + currentUserID).update("isOnline", isOnline, "lastSeen", null);
         }
 
     }
