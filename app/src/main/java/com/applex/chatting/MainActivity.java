@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            updateUserStatus("online");
+            updateUserStatus(true);
             VerifyUserExistance();
         }
     }
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if(currentUser!=null){
-            updateUserStatus("offline");
+            updateUserStatus(false);
         }
     }
 
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null){
-            updateUserStatus("offline");
+            updateUserStatus(false);
         }
     }
 
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.main_logout_option)
         {
-           updateUserStatus("offline");
+           updateUserStatus(false);
            mAuth.signOut();
            SendUserToLoginActivity();
         }
@@ -239,27 +239,29 @@ public class MainActivity extends AppCompatActivity {
         startActivity(findFriendsIntent);
     }
 
-    private void updateUserStatus(String state){
+    private void updateUserStatus(boolean isOnline){
 
-        String saveCurrentTime, saveCurrentDate;
-
-        Calendar calendar = Calendar.getInstance();
-
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
-        saveCurrentDate = currentDate.format(calendar.getTime());
-
-        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
-        saveCurrentTime = currentTime.format(calendar.getTime());
-
-        HashMap<String,Object> onlineStateMap = new HashMap<>();
-        onlineStateMap.put("time",saveCurrentTime);
-        onlineStateMap.put("date",saveCurrentDate);
-        onlineStateMap.put("state",state);
+//        String saveCurrentTime, saveCurrentDate;
+//
+//        Calendar calendar = Calendar.getInstance();
+//
+//        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
+//        saveCurrentDate = currentDate.format(calendar.getTime());
+//
+//        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
+//        saveCurrentTime = currentTime.format(calendar.getTime());
 
         currentUserID = mAuth.getCurrentUser().getUid();
 
-        RootRef.child("Users").child(currentUserID).child("userState")
-                .updateChildren(onlineStateMap);
+        if (isOnline)
+        {
+            FirebaseFirestore.getInstance().document("Users/"+currentUserID).update("isOnline", isOnline);
+
+        }
+        else {
+
+            FirebaseFirestore.getInstance().document("Users/" + currentUserID).update("isOnline", isOnline, "lastSeen", null);
+        }
 
     }
 }
