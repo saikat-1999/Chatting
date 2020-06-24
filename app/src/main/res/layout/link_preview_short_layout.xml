@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/bg_radius"
+    android:id="@+id/rich_link_card"
+    android:elevation="2dp"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:autoLink="web"
+        tools:text="Original Link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/rich_link_original_url"/>
+
+    <LinearLayout
+        android:background="@drawable/bg_telegram"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:paddingHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:id="@+id/rich_link_url"
+                android:textColor="@color/md_blue_500"
+                android:padding="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Data"/>
+
+            <TextView
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:id="@+id/rich_link_title"
+                android:textColor="#212121"
+                android:padding="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Data"/>
+
+            <TextView
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:id="@+id/rich_link_desp"
+                android:textColor="#626262"
+                android:padding="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Data"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/rich_link_image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:adjustViewBounds="true"
+            android:minHeight="180dp"
+            android:scaleType="centerCrop"/>
+
+    </LinearLayout>
+
+</LinearLayout>

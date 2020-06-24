@@ -7,6 +7,8 @@ public class ChatRoomModel {
 
     private Timestamp timestamp;//Last Message Timestamp
 
+    private boolean blocked;
+
     public ChatRoomModel() {
     }
 
@@ -24,6 +26,14 @@ public class ChatRoomModel {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public String getReceiver() {
