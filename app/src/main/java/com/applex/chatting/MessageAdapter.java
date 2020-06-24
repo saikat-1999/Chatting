@@ -226,10 +226,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx"))
         {
             if (fromUserID.equals(messageSenderID)) {
+                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                String date = sfd.format(messages.getTimestamp().toDate());
+                holder.docSenderTime.setText(date);
                 holder.senderDocCard.setVisibility(View.VISIBLE);
             }
             else
             {
+                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                String date = sfd.format(messages.getTimestamp().toDate());
+                holder.docReceiverTime.setText(date);
                 holder.recDocCard.setVisibility(View.VISIBLE);
             }
         }
