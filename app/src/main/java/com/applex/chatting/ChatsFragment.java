@@ -77,10 +77,10 @@ public class ChatsFragment extends Fragment {
             {
 //                final String usersIDs = getRef(i).getKey();
 //                final String[] retImage = {"defaultimage"};
+
                 chatsViewHolder.userName.setText(chats.getReceiver());
                 chatsViewHolder.userStatus.setText(chats.getLastMessage());
                 Picasso.get().load(chats.getReceiverDP()).placeholder(R.drawable.ic_baseline_person_24).into(chatsViewHolder.profileImage);
-
 
                 chatsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override

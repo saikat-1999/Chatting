@@ -51,8 +51,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
 
         public TextView senderMessageText, receiverMessageText, senderTime, receiverTime, docName;
+        TextView docSenderTime, docReceiverTime;
         public ImageView messageSenderPicture, messageReceiverPicture;
-        public CardView senderPicCard, recPicCard, senderDocCard, recDocCard;
+        public CardView senderPicCard, recPicCard;
+        LinearLayout senderDocCard, recDocCard;
         public LinearLayout send;
         public LinearLayout receive;
         ApplexLinkPreviewShort senderLink, receiverLink;
@@ -71,6 +73,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             messageSenderPicture = itemView.findViewById(R.id.message_sender_image_view);
             senderTime = itemView.findViewById(R.id.sender_timestamp);
             receiverTime = itemView.findViewById(R.id.receiver_timestamp);
+
+            docReceiverTime = itemView.findViewById(R.id.doc_receiver_timestamp);
+            docSenderTime = itemView.findViewById(R.id.doc_sender_timestamp);
 
             send = itemView.findViewById(R.id.send);
             receive = itemView.findViewById(R.id.receive);
