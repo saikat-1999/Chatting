@@ -11,12 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -77,8 +81,8 @@ public class ChatsFragment extends Fragment {
             {
 //                final String usersIDs = getRef(i).getKey();
 //                final String[] retImage = {"defaultimage"};
-                DocumentReference docref = FirebaseFirestore.getInstance().collection("Users").document(chats.getReceiverUid());
-                docref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+                FirebaseFirestore.getInstance().collection("Users").document(chats.getReceiverUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task)
                     {
@@ -94,11 +98,8 @@ public class ChatsFragment extends Fragment {
                                 chatsViewHolder.online.setVisibility(View.INVISIBLE);
                             }
                         }
-
                     }
                 });
-
-
                 chatsViewHolder.userName.setText(chats.getReceiver());
                 chatsViewHolder.userStatus.setText(chats.getLastMessage());
                 Picasso.get().load(chats.getReceiverDP()).placeholder(R.drawable.ic_baseline_person_24).into(chatsViewHolder.profileImage);
@@ -134,6 +135,7 @@ public class ChatsFragment extends Fragment {
     {
         CircleImageView profileImage;
         TextView userStatus, userName;
+        ImageView online;
 
 
         public ChatsViewHolder(@NonNull View itemView) {
@@ -142,6 +144,7 @@ public class ChatsFragment extends Fragment {
             profileImage = itemView.findViewById(R.id.users_profile_image);
             userStatus = itemView.findViewById(R.id.user_status);
             userName = itemView.findViewById(R.id.user_profile_name);
+            online = itemView.findViewById(R.id.user_online_status);
 
         }
     }
