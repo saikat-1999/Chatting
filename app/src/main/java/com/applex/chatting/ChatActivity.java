@@ -226,8 +226,6 @@ public class ChatActivity extends AppCompatActivity {
                             reference.getDownloadUrl().addOnSuccessListener(uri -> {
                                 Uri downloadUri = uri;
                                 String generatedFilePath = downloadUri.toString();
-
-//                                    myUrl = downloadUrl.toString();
                                 Messages messages= new Messages();
                                 if(getIntent().getStringExtra("text")!=null){
 
@@ -697,49 +695,10 @@ public class ChatActivity extends AppCompatActivity {
 //                Bitmap bitmap = BitmapFactory.decodeByteArray(picCompressed, 0 ,picCompressed.length);
                 Intent i = new Intent(ChatActivity.this, ChatImageView.class);
                 i.putExtra("Imageuri", pic);
-                i.putExtra("RoomID", getIntent().getStringExtra("ID"));
+                i.putExtra("ID", getIntent().getStringExtra("ID"));
                 startActivity(i);
 //                postimage.setImageBitmap(bitmap);
 //
-//                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
-//
-//                Long tsLong = System.currentTimeMillis();
-//                ts = tsLong.toString();
-//
-//                final StorageReference reference = storageReference.child(ts + "." + "jpg");
-//                reference.putBytes(pic)
-//                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                reference.getDownloadUrl().addOnSuccessListener(uri -> {
-//                                    Uri downloadUri = uri;
-//                                    String generatedFilePath = downloadUri.toString();
-////                                    myUrl = downloadUrl.toString();
-//
-//                                    Messages messages = new Messages();
-//                                    messages.setImage(generatedFilePath);
-//                                    messages.setFromUid(FirebaseAuth.getInstance().getUid());
-//                                    messages.setSeen(0);
-//                                    messages.setType(checker);
-//                                    FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
-//                                            .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Void> task) {
-//                                            if (task.isSuccessful()) {
-//                                                loadingBar.dismiss();
-//                                                Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
-//                                            } else {
-//                                                loadingBar.dismiss();
-//                                                Toast.makeText(ChatActivity.this, "Error", Toast.LENGTH_SHORT).show();
-//                                            }
-//                                            MessageInputText.setText("");
-//
-//                                        }
-//                                    });
-//
-//                                });
-//                            }
-//                        });
 
                 }
 
