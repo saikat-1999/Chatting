@@ -115,29 +115,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         String fromUserID = messages.getFromUid();
         String fromMessageType = messages.getType();
 
-//        usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUserID);
-//
-//        usersRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-//            {
-////                if (dataSnapshot.hasChild("image"))
-////                {
-////                    String receiverImage = dataSnapshot.child("image").getValue().toString();
-////                    Picasso.get().load(receiverImage).placeholder(R.drawable.ic_baseline_person_24).into(holder.receiverProfileImage);
-////                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
-
-//        holder.receiverMessageText.setVisibility(View.GONE);
-//        holder.receiverProfileImage.setVisibility(View.GONE);
-//        holder.senderMessageText.setVisibility(View.GONE);
+        holder.senderLink.setVisibility(View.GONE);
+        holder.receiverLink.setVisibility(View.GONE);
+        holder.recDocCard.setVisibility(View.GONE);
+        holder.recDocCard.setVisibility(View.GONE);
         holder.send.setVisibility(View.GONE);
         holder.receive.setVisibility(View.GONE);
         holder.senderPicCard.setVisibility(View.GONE);

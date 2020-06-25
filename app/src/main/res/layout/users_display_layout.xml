@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="#fff"
     android:layout_height="85dp">
 
     <LinearLayout
@@ -15,7 +16,7 @@
             android:id="@+id/users_profile_image"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:src="@drawable/ic_baseline_person_24"/>
+            android:src="@drawable/ic_account_circle_black_24dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,18 +47,31 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="-20dp"
                     android:src="@drawable/ic_baseline_brightness_1_24"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/user_status"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="User Status"
-                android:paddingHorizontal="10dp"
-                android:textAlignment="textStart"
-                android:textSize="16sp"/>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/user_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="User Status"
+                    android:layout_marginEnd="55dp"
+                    android:paddingHorizontal="10dp"
+                    android:textAlignment="textStart"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:text="05:43 am"/>
+            </RelativeLayout>
 
         </LinearLayout>
 

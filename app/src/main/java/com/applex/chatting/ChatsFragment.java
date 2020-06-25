@@ -33,6 +33,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -42,9 +44,9 @@ public class ChatsFragment extends Fragment {
     private RecyclerView chatsList;
 
     private CollectionReference ChatsRef;
-    private CollectionReference UsersRef;
+//    private CollectionReference UsersRef;
     private FirebaseAuth mAuth;
-    private  String currentUserID;
+    private String currentUserID;
 
 
     public ChatsFragment() {
@@ -82,7 +84,6 @@ public class ChatsFragment extends Fragment {
             {
 //                final String usersIDs = getRef(i).getKey();
 //                final String[] retImage = {"defaultimage"};
-                Toast.makeText(getActivity(), chats.getReceiverUid(), Toast.LENGTH_SHORT).show();
 
                 FirebaseFirestore.getInstance().collection("Users").document(chats.getReceiverUid())
                         .get()
@@ -101,13 +102,16 @@ public class ChatsFragment extends Fragment {
                             {
                                 chatsViewHolder.online.setVisibility(View.GONE);
                             }
-                            chatsViewHolder.userStatus.setText(userModel.getLastSeen().toDate().toString());
 
                         }
                     }
                 });
+                chatsViewHolder.userStatus.setText(chats.getLastMessage());
                 chatsViewHolder.userName.setText(chats.getReceiver());
-                Picasso.get().load(chats.getReceiverDP()).placeholder(R.drawable.ic_baseline_person_24).into(chatsViewHolder.profileImage);
+                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                String date = sfd.format(chats.getTimestamp().toDate());
+                chatsViewHolder.time.setText(date);
+                Picasso.get().load(chats.getReceiverDP()).placeholder(R.drawable.ic_account_circle_black_24dp).into(chatsViewHolder.profileImage);
 
 
                 chatsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +121,7 @@ public class ChatsFragment extends Fragment {
                         intent.putExtra("ID",chats.getRoomID());
                         intent.putExtra("Name",chats.getReceiver());
                         intent.putExtra("DP",chats.getReceiverDP());
+                        intent.putExtra("Uid",chats.getReceiverUid());
                         startActivity(intent);
                     }
                 });
@@ -139,7 +144,7 @@ public class ChatsFragment extends Fragment {
     public static class ChatsViewHolder extends RecyclerView.ViewHolder
     {
         CircleImageView profileImage;
-        TextView userStatus, userName;
+        TextView userStatus, userName, time;
         ImageView online;
 
 
@@ -150,6 +155,7 @@ public class ChatsFragment extends Fragment {
             userStatus = itemView.findViewById(R.id.user_status);
             userName = itemView.findViewById(R.id.user_profile_name);
             online = itemView.findViewById(R.id.user_online_status);
+            time = itemView.findViewById(R.id.time);
 
         }
     }

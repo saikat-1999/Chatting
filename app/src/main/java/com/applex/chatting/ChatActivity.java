@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -47,6 +48,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.google.type.Date;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -97,7 +99,8 @@ public class ChatActivity extends AppCompatActivity {
        InitializeControllers();
 
        userName.setText(getIntent().getStringExtra("Name"));
-        Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_baseline_person_24).into(userImage);
+       Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_baseline_person_24).into(userImage);
+       DisplayLastSeen();
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +108,6 @@ public class ChatActivity extends AppCompatActivity {
                 SendMessage();
             }
         });
-        //DisplayLastSeen();
 
         SendFilesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +130,6 @@ public class ChatActivity extends AppCompatActivity {
                         if (which == 0)
                         {
                             checker = "image";
-
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.setType("image/*");
@@ -243,10 +244,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == 438 && resultCode == RESULT_OK && data!= null && data.getData()!= null)
         {
             loadingBar.setTitle("Sending File");
@@ -258,16 +257,7 @@ public class ChatActivity extends AppCompatActivity {
 
             if (!checker.equals("image"))
             {
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Document Files");
-
-//                final String messageSenderRef = "Messages/" + messageSenderID + "/" + messageReceiverID;
-//                final String messageReceiverRef = "Messages/" + messageReceiverID + "/" + messageSenderID;
-//
-//                DatabaseReference userMessageKeyRef = RootRef.child("Messages")
-//                        .child(messageSenderID).child(messageReceiverID).push();
-//
-//                final String messagePushID = userMessageKeyRef.getKey();
-
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Chat/"+getIntent().getStringExtra("ID")+"/Images");
                 Long tsLong = System.currentTimeMillis();
                 ts = tsLong.toString();
 
@@ -281,7 +271,6 @@ public class ChatActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri)
                             {
-
                                 String downloadUrl = uri.toString();
                                 Messages messages = new Messages();
                                 messages.setDocument(downloadUrl);
@@ -303,21 +292,7 @@ public class ChatActivity extends AppCompatActivity {
 
                                     }
                                 });
-//                                Map messageTextBody = new HashMap();
-//                                messageTextBody.put("message", downloadUrl);
-//                                messageTextBody.put("name", fileUri.getLastPathSegment());
-//                                messageTextBody.put("type", checker);
-//                                messageTextBody.put("from",messageSenderID);
-//                                messageTextBody.put("to",messageReceiverID);
-//                                messageTextBody.put("messageID",messagePushID);
-//                                messageTextBody.put("time",saveCurrentTime);
-//                                messageTextBody.put("date",saveCurrentDate);
-//
-//                                Map messageBodyDetails = new HashMap();
-//                                messageBodyDetails.put(messageSenderRef + "/" + messagePushID, messageTextBody);
-//                                messageBodyDetails.put(messageReceiverRef + "/" + messagePushID, messageTextBody);
-//
-//                                RootRef.updateChildren(messageBodyDetails);
+
                                 loadingBar.dismiss();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -428,37 +403,36 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-//    private void DisplayLastSeen(){
-//
-//        RootRef.child("Users").child(messageReceiverID)
-//                .addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                        if(dataSnapshot.child("userState").hasChild("state")){
-//                            String state = dataSnapshot.child("userState").child("state").getValue().toString();
-//                            String date = dataSnapshot.child("userState").child("date").getValue().toString();
-//                            String time = dataSnapshot.child("userState").child("time").getValue().toString();
-//
-//                            if(state.equals("online")){
-//                                userLastSeen.setText("online");
-//                            }
-//                            else if(state.equals("offline")){
-//                                userLastSeen.setText("Last Seen: " + date + " " + time);
-//
-//                            }
-//                        }
-//                        else{
-//                            userLastSeen.setText("offline");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//    }
+    private void DisplayLastSeen(){
+        FirebaseFirestore.getInstance().collection("Users").document(getIntent().getStringExtra("Uid"))
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e!=null) {
+                            Log.w("TAG", "listen:error", e);
+                            return;
+                        }
+                        if(documentSnapshot != null && documentSnapshot.exists()) {
+                            UserModel userModel = documentSnapshot.toObject(UserModel.class);
+                            if (userModel.getIsOnline() == 1)
+                            {
+                                userLastSeen.setText("Online");
+                            }
+                            else {
+                                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                                String date = sfd.format(userModel.getLastSeen().toDate());
+                                userLastSeen.setText(date);
+                            }
+                            Picasso.get().load(userModel.getImage()).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
+
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+    }
 
     @Override
     protected void onStart() {
@@ -468,12 +442,15 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/");
+        FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+                .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+                .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
     }
 
     private void SendMessage(){
@@ -488,6 +465,8 @@ public class ChatActivity extends AppCompatActivity {
             messages.setMessage(messageText);
             messages.setFromUid(FirebaseAuth.getInstance().getUid());
             messages.setSeen(0);
+            Timestamp ts = Timestamp.now();
+            messages.setTimestamp(ts);
             messages.setType("text");
             FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages/").document()
                     .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {

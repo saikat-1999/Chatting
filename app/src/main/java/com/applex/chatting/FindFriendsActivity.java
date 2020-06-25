@@ -90,6 +90,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                                         intent.putExtra("ID",roomModel.getRoomID());
                                         intent.putExtra("Name",userModel.getName());
                                         intent.putExtra("DP",userModel.getImage());
+                                        intent.putExtra("Uid",userModel.getUid());
                                         startActivity(intent);
                                     }
                                     else {
@@ -122,6 +123,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                                                     intent.putExtra("ID", RoomID);
                                                     intent.putExtra("Name",userModel.getName());
                                                     intent.putExtra("DP",userModel.getImage());
+                                                    intent.putExtra("Uid",userModel.getUid());
                                                     startActivity(intent);
                                                 }
                                                 else

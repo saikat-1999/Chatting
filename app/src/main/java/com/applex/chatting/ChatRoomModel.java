@@ -1,11 +1,12 @@
 package com.applex.chatting;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.ServerTimestamp;
 
 public class ChatRoomModel {
     private String lastMessage, receiver, receiverDP, roomID, receiverUid;
 
-    private Timestamp timestamp;//Last Message Timestamp
+    @ServerTimestamp private Timestamp timestamp;//Last Message Timestamp
 
     private long blocked;
 
