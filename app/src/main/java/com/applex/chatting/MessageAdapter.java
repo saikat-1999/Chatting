@@ -202,12 +202,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.messageSenderPicture.setVisibility(View.VISIBLE);
                 Picasso.get().load(messages.getImage()).into(holder.messageSenderPicture);
 
-                if(holder.senderMessageText!=null){
+                if(messages.getMessage()!=null){
                     holder.receiverMessageText.setVisibility(View.VISIBLE);
                     holder.senderMessageText.setText(messages.getMessage());
                 }
                 else
                     holder.senderMessageText.setVisibility(View.GONE);
+
+                if(messages.getSeen() == 0){
+                    holder.seen.setVisibility(View.GONE);
+                }
+                else {
+                    holder.seen.setVisibility(View.VISIBLE);
+                }
+
             }
             else
             {
@@ -218,12 +226,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.recPicCard.setVisibility(View.VISIBLE);
                 holder.messageReceiverPicture.setVisibility(View.VISIBLE);
                 Picasso.get().load(messages.getImage()).into(holder.messageReceiverPicture);
-                if(holder.receiverMessageText!=null){
+                if(messages.getMessage()!=null){
                     holder.receiverMessageText.setVisibility(View.VISIBLE);
                     holder.receiverMessageText.setText(messages.getMessage());
                 }
                 else
                     holder.receiverMessageText.setVisibility(View.GONE);
+
             }
         }
         else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx"))
@@ -233,6 +242,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 String date = sfd.format(messages.getTimestamp().toDate());
                 holder.docSenderTime.setText(date);
                 holder.senderDocCard.setVisibility(View.VISIBLE);
+                if(messages.getSeen() == 0){
+                    holder.seen.setVisibility(View.GONE);
+                }
+                else {
+                    holder.seen.setVisibility(View.VISIBLE);
+                }
             }
             else
             {

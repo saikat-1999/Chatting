@@ -133,9 +133,12 @@ public class ChatImageView extends AppCompatActivity {
                                 messages.setImage(generatedFilePath);
                                 messages.setFromUid(FirebaseAuth.getInstance().getUid());
                                 messages.setSeen(0);
+                                if(!editText.getText().toString().isEmpty())
+                                    messages.setMessage(editText.getText().toString());
                                 messages.setTimestamp(Timestamp.now());
                                 messages.setType("image");
-                                FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
+                                FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/")
+                                        .document()
                                         .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -146,8 +149,7 @@ public class ChatImageView extends AppCompatActivity {
                                             loadingBar.dismiss();
                                             Toast.makeText(ChatImageView.this, "Error", Toast.LENGTH_SHORT).show();
                                         }
-                                        super.onBackPressed();
-
+                                        ChatImageView.super.onBackPressed();
                                     }
                                 });
 
@@ -169,6 +171,7 @@ public class ChatImageView extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode== RESULT_OK && requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             Uri resultUri = result.getUri();
