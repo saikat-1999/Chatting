@@ -177,6 +177,11 @@ public class ChatActivity extends AppCompatActivity {
                                     case ADDED:
                                         Messages messages = dc.getDocument().toObject(Messages.class);
                                         messages.setDocID(dc.getDocument().getId());
+                                        FirebaseFirestore.getInstance().collection("Rooms")
+                                                .document(getIntent().getStringExtra("ID"))
+                                                .collection("Messages")
+                                                .document(messages.getDocID())
+                                                .update("seen",1);
                                         messagesList.add(messages);
                                         messageAdapter.notifyDataSetChanged();
                                         userMessagesList.clearOnScrollListeners();

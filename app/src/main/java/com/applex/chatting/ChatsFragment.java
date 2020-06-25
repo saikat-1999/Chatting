@@ -106,8 +106,11 @@ public class ChatsFragment extends Fragment {
                 chatsViewHolder.userStatus.setText(chats.getLastMessage());
                 chatsViewHolder.userName.setText(chats.getReceiver());
                 SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
-                String date = sfd.format(chats.getTimestamp().toDate());
-                chatsViewHolder.time.setText(date);
+                if (chats.getTimestamp()!=null) {
+                    String date = sfd.format(chats.getTimestamp().toDate());
+                    chatsViewHolder.time.setText(date);
+                }
+
                 Picasso.get().load(chats.getReceiverDP()).placeholder(R.drawable.ic_account_circle_black_24dp).into(chatsViewHolder.profileImage);
 
 
