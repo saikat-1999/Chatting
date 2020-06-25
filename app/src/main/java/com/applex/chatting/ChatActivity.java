@@ -209,11 +209,11 @@ public class ChatActivity extends AppCompatActivity {
             Long tsLong = System.currentTimeMillis();
             String ts = tsLong.toString();
 
-            byte[] byteArray = getIntent().getByteArrayExtra("pic");
+            pic = getIntent().getByteArrayExtra("pic");
 //            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
             final StorageReference reference = storageReference.child(ts + "." + "jpg");
-            reference.putBytes(byteArray)
+            reference.putBytes(pic)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

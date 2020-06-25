@@ -89,8 +89,10 @@ public class ChatImageView extends AppCompatActivity {
                i.putExtra("fromChatImageView", "pic");
                i.putExtra("pic", pic);
 
-               if(messageText!=null)
-                    i.putExtra("text",messageText);
+               if(messageText!=null && messageText.isEmpty()){
+                   i.putExtra("text",messageText);
+               }
+
 
                Toast.makeText(getApplicationContext(), pic+ messageText,Toast.LENGTH_LONG).show();
                startActivity(i);
