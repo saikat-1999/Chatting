@@ -201,6 +201,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.senderPicCard.setVisibility(View.VISIBLE);
                 holder.messageSenderPicture.setVisibility(View.VISIBLE);
                 Picasso.get().load(messages.getImage()).into(holder.messageSenderPicture);
+
+                if(holder.senderMessageText!=null){
+                    holder.receiverMessageText.setVisibility(View.VISIBLE);
+                    holder.senderMessageText.setText(messages.getMessage());
+                }
+                else
+                    holder.senderMessageText.setVisibility(View.GONE);
             }
             else
             {
@@ -211,6 +218,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.recPicCard.setVisibility(View.VISIBLE);
                 holder.messageReceiverPicture.setVisibility(View.VISIBLE);
                 Picasso.get().load(messages.getImage()).into(holder.messageReceiverPicture);
+                if(holder.receiverMessageText!=null){
+                    holder.receiverMessageText.setVisibility(View.VISIBLE);
+                    holder.receiverMessageText.setText(messages.getMessage());
+                }
+                else
+                    holder.receiverMessageText.setVisibility(View.GONE);
             }
         }
         else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx"))
