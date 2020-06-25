@@ -57,6 +57,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         LinearLayout senderDocCard, recDocCard;
         public LinearLayout send;
         public LinearLayout receive;
+        ImageView seen;
         ApplexLinkPreviewShort senderLink, receiverLink;
 
         public MessageViewHolder(@NonNull View itemView, OnLongClickListener listener)
@@ -82,6 +83,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             senderPicCard = itemView.findViewById(R.id.send_card_pic);
             recPicCard =  itemView.findViewById(R.id.receive_card_pic);
+
+            seen = itemView.findViewById(R.id.seen);
 
             send.setOnLongClickListener(v -> {
                 if(listener != null){
@@ -133,6 +136,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.senderTime.setText(date);
                 holder.send.setVisibility(View.VISIBLE);
                 holder.senderMessageText.setVisibility(View.VISIBLE);
+                if(messages.getSeen() == 0){
+                    holder.seen.setVisibility(View.GONE);
+                }
+                else {
+                    holder.seen.setVisibility(View.VISIBLE);
+                }
                 holder.senderMessageText.setText(messages.getMessage());
                 if(holder.senderMessageText.getUrls().length>0){
                     URLSpan urlSnapItem = holder.senderMessageText.getUrls()[0];

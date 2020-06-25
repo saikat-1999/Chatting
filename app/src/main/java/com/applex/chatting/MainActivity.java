@@ -83,16 +83,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if(currentUser!=null){
-            updateUserStatus(false);
-        }
-    }
+//    @Override
+////    protected void onPause() {
+////        super.onPause();
+////        FirebaseUser currentUser = mAuth.getCurrentUser();
+////
+////        if(currentUser!=null){
+////            updateUserStatus(false);
+////        }
+////    }
 
     @Override
     protected void onDestroy() {
@@ -256,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isOnline)
         {
-            FirebaseFirestore.getInstance().document("Users/"+currentUserID).update("isOnline", 1);
+            FirebaseFirestore.getInstance().document("Users/"+currentUserID).update("isOnline", 1 );
 
         }
         else {
