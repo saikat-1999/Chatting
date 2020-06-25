@@ -48,12 +48,9 @@ public class ChatsFragment extends Fragment {
     private FirebaseAuth mAuth;
     private String currentUserID;
 
-
     public ChatsFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

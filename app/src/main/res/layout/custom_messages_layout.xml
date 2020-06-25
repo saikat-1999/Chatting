@@ -119,15 +119,27 @@
             android:textColorLink="@color/design_default_color_secondary"
             android:textColor="@android:color/white"/>
 
-        <TextView
-            android:id="@+id/sender_timestamp"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10/10/10"
-            android:paddingHorizontal="10dp"
-            android:textSize="12sp"
-            android:paddingTop="4dp"
-            android:textColor="#aaffffff"/>
+            android:paddingHorizontal="10dp">
+            <TextView
+                android:id="@+id/sender_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10/10/10"
+                android:textSize="12sp"
+                android:paddingTop="4dp"
+                android:textColor="#aaffffff"/>
+
+            <ImageView
+                android:id="@+id/seen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:src="@drawable/ic_baseline_done_all_24"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
