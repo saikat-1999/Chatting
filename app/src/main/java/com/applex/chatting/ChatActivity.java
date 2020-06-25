@@ -23,7 +23,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,6 +100,23 @@ public class ChatActivity extends AppCompatActivity {
         messageSenderID = mAuth.getCurrentUser().getUid();
 
        InitializeControllers();
+
+        MessageInputText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                FirebaseFirestore.getInstance().collection("Users").document(mAuth.getUid()).update("istyping", 1);
+            }
+        });
 
        userName.setText(getIntent().getStringExtra("Name"));
        Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_baseline_person_24).into(userImage);
@@ -500,9 +519,13 @@ public class ChatActivity extends AppCompatActivity {
                         }
                         if(documentSnapshot != null && documentSnapshot.exists()) {
                             UserModel userModel = documentSnapshot.toObject(UserModel.class);
-                            if (userModel.getIsOnline() == 1)
+                            if (userModel.getIsOnline() == 1 && userModel.getIsTyping() != 1)
                             {
                                 userLastSeen.setText("Online");
+                            }
+                            else if (userModel.getIsOnline() == 1 && userModel.getIsTyping() == 1)
+                            {
+                                userLastSeen.setText("Typing");
                             }
                             else {
                                 SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
@@ -545,6 +568,8 @@ public class ChatActivity extends AppCompatActivity {
     private void SendMessage(){
 
         String messageText = MessageInputText.getText().toString();
+        FirebaseFirestore.getInstance().collection("Users").document(mAuth.getUid()).update("istyping", 0);
+
 
         if(TextUtils.isEmpty(messageText)){
             Toast.makeText(this, "first write your message...", Toast.LENGTH_SHORT).show();
