@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -33,6 +34,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -45,7 +47,8 @@ public class ChatImageView extends AppCompatActivity {
     FloatingActionButton send;
     ProgressDialog loadingBar;
     Bitmap bmp;
-    String RoomID;
+
+    Uri picUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,14 @@ public class ChatImageView extends AppCompatActivity {
         back= findViewById(R.id.back);
 
         if(getIntent().getByteArrayExtra("Imageuri")!=null){
-            pic = getIntent().getByteArrayExtra("Imageuri");
-            RoomID = getIntent().getStringExtra("RoomID");   //from Chat Activity
+            pic = getIntent().getByteArrayExtra("Imageuri");              //from Chat Activity
+            String s = null;
+            try {
+                s = new String(pic, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            picUri = Uri.parse(s);
             bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
             imageView.setImageBitmap(bmp);
         }
@@ -69,7 +78,7 @@ public class ChatImageView extends AppCompatActivity {
         crop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity(getImageUri(getApplicationContext(), bmp))
+                CropImage.activity(picUri)
                         .setActivityTitle("Crop Image")
                         .setAllowRotation(TRUE)
                         .setAllowCounterRotation(TRUE)
@@ -86,19 +95,65 @@ public class ChatImageView extends AppCompatActivity {
            @Override
            public void onClick(View v) {
 
-               String messageText = editText.getText().toString();
-               Intent i= new Intent(ChatImageView.this, ChatActivity.class);
-               i.putExtra("fromChatImageView", "pic");
-               i.putExtra("RoomID", RoomID);
-               i.putExtra("pic", pic);
+//               String messageText = editText.getText().toString();
+//               Intent i= new Intent(ChatImageView.this, ChatActivity.class);
+//               i.putExtra("fromChatImageView", "pic");
+//               i.putExtra("pic", pic);
+//
+//               if(messageText!=null && messageText.isEmpty()){
+//                   i.putExtra("text",messageText);
+//               }
+//
+//               Toast.makeText(getApplicationContext(), pic+ messageText,Toast.LENGTH_LONG).show();
+//               startActivity(i);
+//               finish();
 
-               if(messageText!=null && !messageText.isEmpty()){
-                   i.putExtra("text",messageText);
-               }
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
 
-               //Toast.makeText(getApplicationContext(), pic+ messageText,Toast.LENGTH_LONG).show();
-               startActivity(i);
-               finish();
+            Long tsLong = System.currentTimeMillis();
+            String ts = tsLong.toString();
+
+               loadingBar = new ProgressDialog(ChatImageView.this);
+               loadingBar.setTitle("Sending File");
+               loadingBar.setMessage("Please wait, we are sending that file...");
+               loadingBar.setCanceledOnTouchOutside(false);
+               loadingBar.show();
+
+            final StorageReference reference = storageReference.child(ts + "." + "jpg");
+            reference.putBytes(pic)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                                Uri downloadUri = uri;
+                                String generatedFilePath = downloadUri.toString();
+//                                    myUrl = downloadUrl.toString();
+
+                                Messages messages = new Messages();
+                                messages.setImage(generatedFilePath);
+                                messages.setFromUid(FirebaseAuth.getInstance().getUid());
+                                messages.setSeen(0);
+                                messages.setTimestamp(Timestamp.now());
+                                messages.setType("image");
+                                FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
+                                        .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            loadingBar.dismiss();
+                                            Toast.makeText(ChatImageView.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            loadingBar.dismiss();
+                                            Toast.makeText(ChatImageView.this, "Error", Toast.LENGTH_SHORT).show();
+                                        }
+                                        super.onBackPressed();
+
+                                    }
+                                });
+
+                            });
+                        }
+                    });
            }
        });
 
