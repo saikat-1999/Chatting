@@ -45,6 +45,7 @@ public class ChatImageView extends AppCompatActivity {
     FloatingActionButton send;
     ProgressDialog loadingBar;
     Bitmap bmp;
+    String RoomID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,8 @@ public class ChatImageView extends AppCompatActivity {
         back= findViewById(R.id.back);
 
         if(getIntent().getByteArrayExtra("Imageuri")!=null){
-            pic = getIntent().getByteArrayExtra("Imageuri");              //from Chat Activity
+            pic = getIntent().getByteArrayExtra("Imageuri");
+            RoomID = getIntent().getStringExtra("RoomID");   //from Chat Activity
             bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
             imageView.setImageBitmap(bmp);
         }
@@ -87,18 +89,16 @@ public class ChatImageView extends AppCompatActivity {
                String messageText = editText.getText().toString();
                Intent i= new Intent(ChatImageView.this, ChatActivity.class);
                i.putExtra("fromChatImageView", "pic");
+               i.putExtra("RoomID", RoomID);
                i.putExtra("pic", pic);
 
-               if(messageText!=null && messageText.isEmpty()){
+               if(messageText!=null && !messageText.isEmpty()){
                    i.putExtra("text",messageText);
                }
 
-
-               Toast.makeText(getApplicationContext(), pic+ messageText,Toast.LENGTH_LONG).show();
+               //Toast.makeText(getApplicationContext(), pic+ messageText,Toast.LENGTH_LONG).show();
                startActivity(i);
                finish();
-
-
            }
        });
 

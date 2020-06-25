@@ -210,6 +210,7 @@ public class ChatActivity extends AppCompatActivity {
             String ts = tsLong.toString();
 
             pic = getIntent().getByteArrayExtra("pic");
+
 //            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
             final StorageReference reference = storageReference.child(ts + "." + "jpg");
@@ -691,6 +692,7 @@ public class ChatActivity extends AppCompatActivity {
 //                Bitmap bitmap = BitmapFactory.decodeByteArray(picCompressed, 0 ,picCompressed.length);
                 Intent i = new Intent(ChatActivity.this, ChatImageView.class);
                 i.putExtra("Imageuri", pic);
+                i.putExtra("RoomID", getIntent().getStringExtra("ID"));
                 startActivity(i);
 //                postimage.setImageBitmap(bitmap);
 //
