@@ -49,7 +49,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="-20dp"
                     android:src="@drawable/ic_baseline_brightness_1_24"
-                    android:visibility="visible"/>
+                    android:visibility="invisible"/>
 
             </LinearLayout>
 
