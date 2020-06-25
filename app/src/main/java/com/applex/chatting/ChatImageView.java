@@ -58,7 +58,7 @@ public class ChatImageView extends AppCompatActivity {
         back= findViewById(R.id.back);
 
         if(getIntent().getByteArrayExtra("Imageuri")!=null){
-            byte[] pic = getIntent().getByteArrayExtra("Imageuri");              //from Chat Activity
+            pic = getIntent().getByteArrayExtra("Imageuri");              //from Chat Activity
             bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
             imageView.setImageBitmap(bmp);
         }
