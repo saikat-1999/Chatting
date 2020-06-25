@@ -246,12 +246,9 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 438 && resultCode == RESULT_OK && data!= null && data.getData()!= null)
-        {
-
+        if (requestCode == 438 && resultCode == RESULT_OK && data!= null && data.getData()!= null) {
 
             fileUri = data.getData();
-
 
             if (!checker.equals("image"))
             {
