@@ -22,6 +22,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -194,6 +195,73 @@ public class ChatActivity extends AppCompatActivity {
                             }
                     }
                 });
+
+        if(getIntent().getStringExtra("fromChatImageView")!=null){
+
+            loadingBar = new ProgressDialog(ChatActivity.this);
+            loadingBar.setTitle("Sending File");
+            loadingBar.setMessage("Please wait, we are sending that file...");
+            loadingBar.setCanceledOnTouchOutside(false);
+            loadingBar.show();
+
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
+
+            Long tsLong = System.currentTimeMillis();
+            String ts = tsLong.toString();
+
+            byte[] byteArray = getIntent().getByteArrayExtra("pic");
+//            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+            final StorageReference reference = storageReference.child(ts + "." + "jpg");
+            reference.putBytes(byteArray)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                                Uri downloadUri = uri;
+                                String generatedFilePath = downloadUri.toString();
+
+//                                    myUrl = downloadUrl.toString();
+                                Messages messages= new Messages();
+                                if(getIntent().getStringExtra("text")!=null){
+
+                                    messages.setImage(generatedFilePath);
+                                    messages.setMessage(getIntent().getStringExtra("text"));
+                                    messages.setFromUid(FirebaseAuth.getInstance().getUid());
+                                    messages.setSeen(0);
+                                    messages.setType("image");
+                                }
+                                else{
+
+                                    messages.setImage(generatedFilePath);
+                                    messages.setFromUid(FirebaseAuth.getInstance().getUid());
+                                    messages.setSeen(0);
+                                    messages.setType("image");
+                                }
+
+
+                                FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
+                                        .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            loadingBar.dismiss();
+                                            Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
+
+                                        } else {
+                                            loadingBar.dismiss();
+                                            Toast.makeText(ChatActivity.this, "Error", Toast.LENGTH_SHORT).show();
+
+                                        }
+
+                                    }
+
+                                });
+
+                            });
+                        }
+                    });
+        }
 
     }
 
@@ -450,9 +518,12 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
-                .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
-    }
+        if (messagesList.size()>0){
+            FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+                    .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
+
+        }
+     }
 
     private void SendMessage(){
 
@@ -688,6 +759,5 @@ public class ChatActivity extends AppCompatActivity {
         }
 
     }
-
 
 }

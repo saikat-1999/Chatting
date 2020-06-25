@@ -44,6 +44,7 @@ public class ChatImageView extends AppCompatActivity {
     byte[] pic;
     FloatingActionButton send;
     ProgressDialog loadingBar;
+    Bitmap bmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +57,12 @@ public class ChatImageView extends AppCompatActivity {
         send= findViewById(R.id.send);
         back= findViewById(R.id.back);
 
-        byte[] byteArray = getIntent().getByteArrayExtra("Imageuri");
-        Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        if(getIntent().getByteArrayExtra("Imageuri")!=null){
+            byte[] pic = getIntent().getByteArrayExtra("Imageuri");              //from Chat Activity
+            bmp = BitmapFactory.decodeByteArray(pic, 0, pic.length);
+            imageView.setImageBitmap(bmp);
+        }
 
-        imageView.setImageBitmap(bmp);
 
         crop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,57 +83,20 @@ public class ChatImageView extends AppCompatActivity {
        send.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               loadingBar = new ProgressDialog(ChatImageView.this);
-               loadingBar.setTitle("Sending File");
-               loadingBar.setMessage("Please wait, we are sending that file...");
-               loadingBar.setCanceledOnTouchOutside(false);
-               loadingBar.show();
 
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
+               String messageText = editText.getText().toString();
+               Intent i= new Intent(ChatImageView.this, ChatActivity.class);
+               i.putExtra("fromChatImageView", "pic");
+               i.putExtra("pic", pic);
 
-                Long tsLong = System.currentTimeMillis();
-                String ts = tsLong.toString();
+               if(i.getStringExtra("text")!=null)
+                    i.putExtra("text",messageText);
 
-                final StorageReference reference = storageReference.child(ts + "." + "jpg");
-                reference.putBytes(pic)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                reference.getDownloadUrl().addOnSuccessListener(uri -> {
-                                    Uri downloadUri = uri;
-                                    String generatedFilePath = downloadUri.toString();
+               Toast.makeText(getApplicationContext(), pic+ messageText,Toast.LENGTH_LONG).show();
+               startActivity(i);
+               finish();
 
-                                    String messageText = editText.getText().toString();
-//                                    myUrl = downloadUrl.toString();
 
-                                    Messages messages = new Messages();
-                                    messages.setImage(generatedFilePath);
-                                    messages.setMessage(messageText);
-                                    messages.setFromUid(FirebaseAuth.getInstance().getUid());
-                                    messages.setSeen(0);
-                                    messages.setType("image");
-
-                                    FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
-                                            .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                loadingBar.dismiss();
-                                                Toast.makeText(ChatImageView.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
-                                                ChatImageView.super.onBackPressed();
-                                            } else {
-                                                loadingBar.dismiss();
-                                                Toast.makeText(ChatImageView.this, "Error", Toast.LENGTH_SHORT).show();
-                                                ChatImageView.super.onBackPressed();
-                                            }
-
-                                        }
-
-                                    });
-
-                                });
-                            }
-                        });
            }
        });
 
@@ -140,8 +106,6 @@ public class ChatImageView extends AppCompatActivity {
                ChatImageView.super.onBackPressed();
            }
        });
-
-
 
     }
 
