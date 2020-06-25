@@ -181,7 +181,21 @@ public class ChatActivity extends AppCompatActivity {
                                                 .document(getIntent().getStringExtra("ID"))
                                                 .collection("Messages")
                                                 .document(messages.getDocID())
-                                                .update("seen",1);
+                                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task)
+                                            {
+                                                Messages messages1 = task.getResult().toObject(Messages.class);
+                                                if (messages1.getSeen() == 0)
+                                                {
+                                                    FirebaseFirestore.getInstance().collection("Rooms")
+                                                            .document(getIntent().getStringExtra("ID"))
+                                                            .collection("Messages")
+                                                            .document(messages.getDocID())
+                                                            .update("seen",1);
+                                                }
+                                            }
+                                        });
                                         messagesList.add(messages);
                                         messageAdapter.notifyDataSetChanged();
                                         userMessagesList.clearOnScrollListeners();
