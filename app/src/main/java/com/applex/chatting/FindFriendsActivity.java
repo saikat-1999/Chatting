@@ -98,7 +98,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                                         RoomID = getAlphaNumericString(20);
                                         ChatRoomModel chatRoomModel1 = new ChatRoomModel();
                                         ChatRoomModel chatRoomModel2 = new ChatRoomModel();
-                                        chatRoomModel1.setLastMessage("Hello");
+                                        chatRoomModel1.setLastMessage("Start Chatting...");
                                         chatRoomModel1.setReceiver(userModel.getName());
                                         chatRoomModel1.setReceiverDP(userModel.getImage());
                                         chatRoomModel1.setReceiverUid(userModel.getUid());
@@ -107,7 +107,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                                         chatRoomModel2.setReceiver("Saikat");//Current User
                                         chatRoomModel2.setReceiverUid(FirebaseAuth.getInstance().getUid());
                                         chatRoomModel2.setReceiverDP("abc");
-                                        chatRoomModel2.setLastMessage("hi");
+                                        chatRoomModel2.setLastMessage("Start Chatting...");
                                         DocumentReference doc1 = FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getUid()).collection("ChatRooms").document(userModel.getUid());
                                         DocumentReference doc2 = FirebaseFirestore.getInstance().collection("Users").document(userModel.getUid()).collection("ChatRooms").document(FirebaseAuth.getInstance().getUid());
                                         WriteBatch batch = FirebaseFirestore.getInstance().batch();
