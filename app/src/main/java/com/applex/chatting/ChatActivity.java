@@ -222,25 +222,13 @@ public class ChatActivity extends AppCompatActivity {
                                     case ADDED:
                                         Messages messages = dc.getDocument().toObject(Messages.class);
                                         messages.setDocID(dc.getDocument().getId());
-                                        FirebaseFirestore.getInstance().collection("Rooms")
-                                                .document(getIntent().getStringExtra("ID"))
-                                                .collection("Messages")
-                                                .document(messages.getDocID())
-                                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task)
-                                            {
-                                                Messages messages1 = task.getResult().toObject(Messages.class);
-                                                if (!messages1.getFromUid().matches(mAuth.getUid()) && messages1.getSeen() == 0)
-                                                {
-                                                    FirebaseFirestore.getInstance().collection("Rooms")
-                                                            .document(getIntent().getStringExtra("ID"))
-                                                            .collection("Messages")
-                                                            .document(messages.getDocID())
-                                                            .update("seen",1);
-                                                }
-                                            }
-                                        });
+                                        if(messages.getSeen() == 0 && !messages.getFromUid().matches(mAuth.getUid())){
+                                            FirebaseFirestore.getInstance().collection("Rooms")
+                                                    .document(getIntent().getStringExtra("ID"))
+                                                    .collection("Messages")
+                                                    .document(messages.getDocID())
+                                                    .update("seen",1);
+                                        }
                                         messagesList.add(messages);
                                         messageAdapter.notifyDataSetChanged();
                                         userMessagesList.clearOnScrollListeners();
