@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
@@ -43,7 +44,7 @@ public class ChatsFragment extends Fragment {
     private View PrivateChatsView;
     private RecyclerView chatsList;
 
-    private CollectionReference ChatsRef;
+    private Query ChatsRef;
 //    private CollectionReference UsersRef;
     private FirebaseAuth mAuth;
     private String currentUserID;
@@ -60,7 +61,8 @@ public class ChatsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         currentUserID =  mAuth.getCurrentUser().getUid();
         // = FirebaseFirestore.getInstance().getReference().child("Contacts").child(currentUserID);
-        ChatsRef = FirebaseFirestore.getInstance().collection("Users/"+currentUserID+"/ChatRooms");
+        ChatsRef = FirebaseFirestore.getInstance().collection("Users/"+currentUserID+"/ChatRooms")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         chatsList = (RecyclerView) PrivateChatsView.findViewById(R.id.chats_list);
         chatsList.setLayoutManager(new LinearLayoutManager(getContext()));

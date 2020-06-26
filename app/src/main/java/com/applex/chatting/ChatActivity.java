@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.net.Uri;
@@ -97,6 +98,7 @@ public class ChatActivity extends AppCompatActivity {
 
     boolean isTyping= false;
     boolean newMessageSent = false;
+    boolean blockStatus = false;
 
     long delay = 2000; // 1 seconds after user stops typing
     long last_text_edit = 0;
@@ -390,22 +392,81 @@ public class ChatActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.block)
         {
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ChatActivity.this);
-            builder.setTitle("Block "+ userName.getText().toString()+"?" )
-                    .setMessage("Do you want to continue?")
-                    .setPositiveButton("Block", (dialog, which) -> {
-                        FirebaseFirestore.getInstance().collection("Rooms").document(RoomID)
-                                .update("block."+mAuth.getUid(), 1)// setting blocked  = 1 against own Uid
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        isTyping = true;
-                                    }
-                                });
-                    })
-                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                    .setCancelable(true)
-                    .show();
+            if(blockStatus){
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+                builder.setTitle("Unblock "+ userName.getText().toString()+"?" )
+                        .setMessage("Are you sure?")
+                        .setPositiveButton("Unblock", (dialog, which) -> {
+                            FirebaseFirestore.getInstance().collection("Rooms").document(RoomID)
+                                    .update("block."+mAuth.getUid(), 0)// setting blocked  = 1 against own Uid
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //Reattach listener
+                                            listener = FirebaseFirestore.getInstance().collection("Users").document(toUid)
+                                                    .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                                                            if (e!=null) {
+                                                                Log.w("TAG", "listen:error", e);
+                                                                return;
+                                                            }
+                                                            if(documentSnapshot != null && documentSnapshot.exists()) {
+                                                                UserModel userModel = documentSnapshot.toObject(UserModel.class);
+                                                                if (userModel.getIsOnline() == 1) {
+                                                                    userLastSeen.setText("Online");
+                                                                }
+                                                                else {
+                                                                    SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                                                                    String date = sfd.format(userModel.getLastSeen().toDate());
+                                                                    userLastSeen.setText(date);
+                                                                }
+                                                                Picasso.get().load(userModel.getImage()).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
+
+                                                            }
+                                                            else {
+                                                                Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
+                                            //Reattach listener
+
+                                            Toast.makeText(getApplicationContext(), "User Unblocked", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .setCancelable(true)
+                        .show();
+            }
+            else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+                builder.setTitle("Block "+ userName.getText().toString()+"?" )
+                        .setMessage("Are you sure?")
+                        .setPositiveButton("Block", (dialog, which) -> {
+                            FirebaseFirestore.getInstance().collection("Rooms").document(RoomID)
+                                    .update("block."+mAuth.getUid(), 1)// setting blocked  = 1 against own Uid
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            userLastSeen.setTextColor(getResources().getColor(R.color.red));
+                                            userLastSeen.setText("BLOCKED");
+                                            blockStatus = true;
+                                            SendMessageButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                            Toast.makeText(getApplicationContext(), "User Blocked", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .setCancelable(true)
+                        .show();
+            }
+
 
         }
 
@@ -567,7 +628,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void DisplayLastSeen(){
-        FirebaseFirestore.getInstance().collection("Users").document(getIntent().getStringExtra("Uid"))
+
+        listener = FirebaseFirestore.getInstance().collection("Users").document(toUid)
                 .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -577,40 +639,10 @@ public class ChatActivity extends AppCompatActivity {
                         }
                         if(documentSnapshot != null && documentSnapshot.exists()) {
                             UserModel userModel = documentSnapshot.toObject(UserModel.class);
-                            if (userModel.getIsOnline() == 1)
-                            {
+                            if (userModel.getIsOnline() == 1) {
                                 userLastSeen.setText("Online");
-                                listener = FirebaseFirestore.getInstance().document("Rooms/"+RoomID+"/")
-                                        .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                                                if (e!=null) {
-                                                    Log.w("TAG", "listen:error", e);
-                                                    return;
-                                                }
-                                                if(documentSnapshot != null && documentSnapshot.exists()) {
-                                                    String isTyping = documentSnapshot.getString("typing."+toUid);
-                                                    String isBlocked = documentSnapshot.getString("block."+toUid);
-                                                    if(isBlocked != null && isBlocked.matches("1")){ // checking if blockd has been set to 1 aginst Sender Uid
-                                                        userLastSeen.setText("BLOCKED");
-                                                        SendMessageButton.setOnClickListener(new View.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(View v) {
-                                                                Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
-                                                    }
-                                                    if(isTyping != null && isTyping.matches("1")){
-                                                        userLastSeen.setText("Typing...");
-                                                    }
-                                                }
-                                            }
-                                        });
                             }
                             else {
-                                if(listener != null){
-                                    listener.remove();
-                                }
                                 SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
                                 String date = sfd.format(userModel.getLastSeen().toDate());
                                 userLastSeen.setText(date);
@@ -620,6 +652,36 @@ public class ChatActivity extends AppCompatActivity {
                         }
                         else {
                             Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        FirebaseFirestore.getInstance().document("Rooms/"+RoomID+"/")
+                .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e!=null) {
+                            Log.w("TAG", "listen:error", e);
+                            return;
+                        }
+                        if(documentSnapshot != null && documentSnapshot.exists()) {
+                            String isTyping = documentSnapshot.getString("typing."+toUid);
+                            String isBlocked = documentSnapshot.getString("block."+toUid);
+                            if(isBlocked != null && isBlocked.matches("1")){ // checking if blockd has been set to 1 aginst Sender Uid
+                                userLastSeen.setText("BLOCKED");
+                                userLastSeen.setTextColor(getResources().getColor(R.color.red));
+                                blockStatus = true;
+                                listener.remove();
+                                SendMessageButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            if(isTyping != null && isTyping.matches("1")){
+                                userLastSeen.setText("Typing...");
+                            }
                         }
                     }
                 });
