@@ -379,7 +379,7 @@ public class ChatActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.show_profile)
         {
-
+            Toast.makeText(getApplicationContext(), "Send to profile", Toast.LENGTH_SHORT).show();
         }
         if (item.getItemId() == R.id.block)
         {
