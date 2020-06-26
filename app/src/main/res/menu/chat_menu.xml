@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Show Profile"
+        android:id="@+id/show_profile"
+        app:showAsAction="never"
+        >
+    </item>
+    <item
+        android:title="Block"
+        android:id="@+id/block"
+        app:showAsAction="never"
+        >
+    </item>
+
+</menu>

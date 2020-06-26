@@ -28,6 +28,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -353,6 +355,30 @@ public class ChatActivity extends AppCompatActivity {
         saveCurrentTime = currentTime.format(calendar.getTime());
         loadingBar = new ProgressDialog(this);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.chat_menu, menu);
+
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        if (item.getItemId() == R.id.show_profile)
+        {
+
+        }
+        if (item.getItemId() == R.id.block)
+        {
+
+        }
+
+        return true;
     }
 
     @Override
