@@ -186,7 +186,7 @@ public class ChatActivity extends AppCompatActivity {
 
         FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages")
                 .orderBy("timestamp")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                .addSnapshotListener(ChatActivity.this, new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e)
                     {
@@ -226,6 +226,7 @@ public class ChatActivity extends AppCompatActivity {
                                         userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
                                         break;
                                     case MODIFIED:
+                                        messageAdapter.notifyDataSetChanged();
                                         break;
                                     case REMOVED:
                                         Messages messagesDel = dc.getDocument().toObject(Messages.class);
@@ -515,7 +516,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void DisplayLastSeen(){
         FirebaseFirestore.getInstance().collection("Users").document(getIntent().getStringExtra("Uid"))
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                         if (e!=null) {
