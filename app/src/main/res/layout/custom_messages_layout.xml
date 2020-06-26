@@ -42,6 +42,7 @@
             android:id="@+id/LinkPreViewReceiver"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minWidth="240dp"
             android:visibility="gone"
             android:minHeight="80dp"/>
 
@@ -103,7 +104,8 @@
         <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
             android:id="@+id/LinkPreViewSender"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="wrap_content"
+            android:minWidth="240dp"
             android:visibility="gone"
             android:minHeight="82dp" />
 

@@ -589,6 +589,10 @@ public class ChatActivity extends AppCompatActivity {
         super.onDestroy();
         FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
                 .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
+        if(isTyping){
+            FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
+                    .update("typing."+FirebaseAuth.getInstance().getUid(), 0);
+        }
     }
 
     @Override
@@ -598,6 +602,10 @@ public class ChatActivity extends AppCompatActivity {
             FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
                     .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
 
+        }
+        if(isTyping){
+            FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
+                    .update("typing."+FirebaseAuth.getInstance().getUid(), 0);
         }
      }
 
