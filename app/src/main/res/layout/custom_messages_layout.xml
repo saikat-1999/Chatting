@@ -103,7 +103,7 @@
         <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
             android:id="@+id/LinkPreViewSender"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="220dp"
             android:visibility="gone"
             android:minHeight="82dp" />
 
