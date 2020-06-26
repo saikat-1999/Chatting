@@ -59,7 +59,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -114,7 +116,10 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                FirebaseFirestore.getInstance().collection("Users").document(mAuth.getUid()).update("istyping", 1);
+                RoomsModel roomsModel = new RoomsModel();
+                roomsModel.setTyping((Map<String, Long>) new HashMap<>().put("Saikat",1));
+                roomsModel.setBlock((Map<String, Long>) new HashMap<>().put("Saikat",0));
+                FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID")).set(roomsModel);
             }
         });
 
@@ -205,7 +210,7 @@ public class ChatActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task)
                                             {
                                                 Messages messages1 = task.getResult().toObject(Messages.class);
-                                                if (messages1.getSeen() == 0)
+                                                if (!messages1.getFromUid().matches(mAuth.getUid()) && messages1.getSeen() == 0)
                                                 {
                                                     FirebaseFirestore.getInstance().collection("Rooms")
                                                             .document(getIntent().getStringExtra("ID"))
@@ -519,11 +524,11 @@ public class ChatActivity extends AppCompatActivity {
                         }
                         if(documentSnapshot != null && documentSnapshot.exists()) {
                             UserModel userModel = documentSnapshot.toObject(UserModel.class);
-                            if (userModel.getIsOnline() == 1 && userModel.getIsTyping() != 1)
+                            if (userModel.getIsOnline() == 1)
                             {
                                 userLastSeen.setText("Online");
                             }
-                            else if (userModel.getIsOnline() == 1 && userModel.getIsTyping() == 1)
+                            else if (userModel.getIsOnline() == 1)
                             {
                                 userLastSeen.setText("Typing");
                             }

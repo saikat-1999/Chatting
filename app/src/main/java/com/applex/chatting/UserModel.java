@@ -7,7 +7,7 @@ public class UserModel {
 
     private String uid, name, status, image;
     @ServerTimestamp private Timestamp lastSeen;
-    private long isOnline, isTyping;
+    private long isOnline;
 
     public String getUid() {
         return uid;
@@ -57,11 +57,4 @@ public class UserModel {
         this.isOnline = isOnline;
     }
 
-    public long getIsTyping() {
-        return isTyping;
-    }
-
-    public void setIsTyping(long isTyping) {
-        this.isTyping = isTyping;
-    }
 }

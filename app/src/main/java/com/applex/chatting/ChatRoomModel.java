@@ -9,6 +9,7 @@ public class ChatRoomModel {
     @ServerTimestamp private Timestamp timestamp;//Last Message Timestamp
 
     private long blocked;
+    private long isTyping;
 
     public ChatRoomModel() {
     }
@@ -67,5 +68,13 @@ public class ChatRoomModel {
 
     public void setReceiverUid(String receiverUid) {
         this.receiverUid = receiverUid;
+    }
+
+    public long getIsTyping() {
+        return isTyping;
+    }
+
+    public void setIsTyping(long isTyping) {
+        this.isTyping = isTyping;
     }
 }
