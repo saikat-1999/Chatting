@@ -504,7 +504,7 @@ public class ChatActivity extends AppCompatActivity {
                                 Messages messages = new Messages();
                                 messages.setDocument(downloadUrl);
                                 messages.setFromUid(FirebaseAuth.getInstance().getUid());
-                                messages.setSeen(0);
+                                messages.setSeen(0);messages.setToUid(toUid);
                                 messages.setType(checker);
                                 FirebaseFirestore.getInstance().collection("Rooms/" + getIntent().getStringExtra("ID") + "/Messages/").document()
                                         .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
