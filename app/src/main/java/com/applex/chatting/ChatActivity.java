@@ -116,10 +116,11 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                RoomsModel roomsModel = new RoomsModel();
-                roomsModel.setTyping((Map<String, Long>) new HashMap<>().put("Saikat",1));
-                roomsModel.setBlock((Map<String, Long>) new HashMap<>().put("Saikat",0));
-                FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID")).set(roomsModel);
+//                RoomsModel roomsModel = new RoomsModel();
+//                roomsModel.setTyping((Map<String, Long>) new HashMap<>().put("Saikat",1));
+//                roomsModel.setBlock((Map<String, Long>) new HashMap<>().put("Saikat",0));
+                FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
+                        .update("typing."+FirebaseAuth.getInstance().getUid(), 1);
             }
         });
 
