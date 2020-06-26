@@ -22,6 +22,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -86,11 +87,15 @@ public class ChatActivity extends AppCompatActivity {
 
     private RecyclerView userMessagesList;
 
-    private String saveCurrentTime, saveCurrentDate;
-    private String checker = "", myUrl = "";
-    private StorageTask uploadTask;
+    private String checker = "";
     private Uri fileUri;
     private ProgressDialog loadingBar;
+
+
+    boolean isTyping= false;
+    long delay = 2000; // 1 seconds after user stops typing
+    long last_text_edit = 0;
+    Handler handler = new Handler();
 
 
     @Override
@@ -103,6 +108,7 @@ public class ChatActivity extends AppCompatActivity {
 
        InitializeControllers();
 
+
         MessageInputText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -111,16 +117,28 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                handler.removeCallbacks(input_finish_checker);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-//                RoomsModel roomsModel = new RoomsModel();
-//                roomsModel.setTyping((Map<String, Long>) new HashMap<>().put("Saikat",1));
-//                roomsModel.setBlock((Map<String, Long>) new HashMap<>().put("Saikat",0));
-                FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
-                        .update("typing."+FirebaseAuth.getInstance().getUid(), 1);
+                if(s.length()>0){
+                    FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
+                            .update("typing."+FirebaseAuth.getInstance().getUid(), 1)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    isTyping = true;
+                                }
+                            });
+
+                }
+
+                if (isTyping) {
+                    last_text_edit = System.currentTimeMillis();
+                    handler.postDelayed(input_finish_checker, delay);
+                }
+
             }
         });
 
@@ -309,6 +327,15 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    ////STOP TYPING CHECK////
+    private Runnable input_finish_checker = () -> {
+        if (System.currentTimeMillis() > (last_text_edit + delay)) {
+            FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
+                    .update("typing."+FirebaseAuth.getInstance().getUid(), 0);
+        }
+    };
+    ////STOP TYPING CHECK////
+
     @SuppressLint("WrongViewCast")
     private void InitializeControllers() {
 
@@ -344,13 +371,6 @@ public class ChatActivity extends AppCompatActivity {
             messageAdapter.notifyItemRemoved(position);
         });
 
-        Calendar calendar = Calendar.getInstance();
-
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
-        saveCurrentDate = currentDate.format(calendar.getTime());
-
-        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
-        saveCurrentTime = currentTime.format(calendar.getTime());
         loadingBar = new ProgressDialog(this);
 
     }
@@ -548,11 +568,6 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
