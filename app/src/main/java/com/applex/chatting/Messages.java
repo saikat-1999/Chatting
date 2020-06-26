@@ -7,15 +7,15 @@ import com.google.firebase.firestore.ServerTimestamp;
 @IgnoreExtraProperties
 public class Messages
 {
-    private  String fromUid, message, type, image, document;
+    private String fromUid, message, type, image, document;
+    private String toUid;
     @ServerTimestamp private Timestamp timestamp;
 
     private long seen;
 
     private String docID;
 
-    Messages()
-    {
+    Messages() {
 
     }
 
@@ -81,5 +81,13 @@ public class Messages
 
     public void setSeen(long seen) {
         this.seen = seen;
+    }
+
+    public String getToUid() {
+        return toUid;
+    }
+
+    public void setToUid(String toUid) {
+        this.toUid = toUid;
     }
 }
