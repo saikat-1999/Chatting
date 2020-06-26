@@ -3,6 +3,8 @@ package com.applex.chatting;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.text.style.URLSpan;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -18,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.applex.chatting.LinkPreview.ApplexLinkPreviewShort;
 import com.applex.chatting.LinkPreview.ViewListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,6 +30,9 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
+import static java.lang.Boolean.TRUE;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>
 {
@@ -114,6 +121,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     {
         String messageSenderID = mAuth.getCurrentUser().getUid();
         Messages messages = userMessagesList.get(position);
+
 
         String fromUserID = messages.getFromUid();
         String fromMessageType = messages.getType();
@@ -263,83 +271,144 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 @Override
                 public void onClick(View v)
                 {
+
                     if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx"))
                     {
-                        CharSequence options[] = new  CharSequence[]
-                                {
-                                        "Download and View This Document",
-                                        "Delete for Everyone"
-                                };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                if (which == 0)
-                                {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-                                else if (which == 1)
-                                {
-                                    deleteMessageForEveryone(position, holder);
-                                }
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
+                        holder.itemView.getContext().startActivity(intent);
 
-                            }
-                        });
-                        builder.show();
+
+
+//                        CharSequence options[] = new  CharSequence[]
+//                                {
+//                                        "Download and View This Document",
+//                                        "Delete for Everyone"
+//                                };
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+//                        builder.setItems(options, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which)
+//                            {
+//                                if (which == 0)
+//                                {
+//                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
+//                                    holder.itemView.getContext().startActivity(intent);
+//                                }
+//                                else if (which == 1)
+//                                {
+//                                    deleteMessageForEveryone(position, holder);
+//                                }
+//
+//                            }
+//                        });
+//                        builder.show();
                     }
                     else if (userMessagesList.get(position).getType().equals("text"))
                     {
-                        CharSequence options[] = new  CharSequence[]
-                                {
-                                        "Delete for Everyone"
-                                };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                if (which == 0)
-                                {
-                                    deleteMessageForEveryone(position, holder);
-                                }
-
-                            }
-                        });
-                        builder.show();
+//                        CharSequence options[] = new  CharSequence[]
+//                                {
+//                                        "Delete for Everyone"
+//                                };
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+//                        builder.setItems(options, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which)
+//                            {
+//                                if (which == 0)
+//                                {
+//                                    deleteMessageForEveryone(position, holder);
+//                                }
+//
+//                            }
+//                        });
+//                        builder.show();
                     }
                     else if (userMessagesList.get(position).getType().equals("image"))
                     {
-                        CharSequence options[] = new  CharSequence[]
-                                {
-                                        "View This Image",
-                                        "Delete for Everyone"
-                                };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        //builder.setTitle("Delete Message?");
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                if (which == 0)
-                                {
-                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
-                                    intent.putExtra("url", userMessagesList.get(position).getImage());
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-                                else if (which == 1)
-                                {
-                                    deleteMessageForEveryone(position, holder);
-
-                                }
-
-                            }
-                        });
-                        builder.show();
+                        Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
+                        intent.putExtra("url", userMessagesList.get(position).getImage());
+                        holder.itemView.getContext().startActivity(intent);
+//                        CharSequence options[] = new  CharSequence[]
+//                                {
+//                                        "View This Image",
+//                                        "Delete for Everyone"
+//                                };
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+//                        //builder.setTitle("Delete Message?");
+//                        builder.setItems(options, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which)
+//                            {
+//                                if (which == 0)
+//                                {
+//                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
+//                                    intent.putExtra("url", userMessagesList.get(position).getImage());
+//                                    holder.itemView.getContext().startActivity(intent);
+//                                }
+//                                else if (which == 1)
+//                                {
+//                                    deleteMessageForEveryone(position, holder);
+//
+//                                }
+//
+//                            }
+//                        });
+//                        builder.show();
                     }
                 }
             });
+
+//            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//                BottomSheetDialog commentMenuDialog;
+//                @Override
+//                public boolean onLongClick(View v) {
+//
+//                    if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx"))
+//                    {
+//                        BottomSheetDialog commentMenuDialog = new BottomSheetDialog(holder.itemView.getContext());
+//                        commentMenuDialog.setContentView(R.layout.dialog_menu);
+//                        commentMenuDialog.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                deleteMessageForEveryone(position, holder);
+//                                commentMenuDialog.dismiss();
+//                            }
+//                        });
+//                        commentMenuDialog.setCanceledOnTouchOutside(TRUE);
+//                    }
+//                    else if (userMessagesList.get(position).getType().equals("text"))
+//                    {
+//                        BottomSheetDialog commentMenuDialog = new BottomSheetDialog(holder.itemView.getContext());
+//                        commentMenuDialog.setContentView(R.layout.dialog_menu);
+//                        commentMenuDialog.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                deleteMessageForEveryone(position, holder);
+//                                commentMenuDialog.dismiss();
+//                            }
+//                        });
+//                        commentMenuDialog.setCanceledOnTouchOutside(TRUE);
+//                    }
+//                    else if (userMessagesList.get(position).getType().equals("image"))
+//                    {
+//                        BottomSheetDialog commentMenuDialog = new BottomSheetDialog(holder.itemView.getContext());
+//                        commentMenuDialog.setContentView(R.layout.dialog_menu);
+//                        commentMenuDialog.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                deleteMessageForEveryone(position, holder);
+//                                commentMenuDialog.dismiss();
+//                            }
+//                        });
+//                        commentMenuDialog.setCanceledOnTouchOutside(TRUE);
+//                    }
+//                    Objects.requireNonNull(commentMenuDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                    commentMenuDialog.show();
+//
+//                    return true;
+//                }
+//
+//            });
         }
         else
         {
@@ -349,25 +418,28 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 {
                     if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx"))
                     {
-                        CharSequence options[] = new  CharSequence[]
-                                {
-                                        "Download and View This Document"
-                                };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        //builder.setTitle("Delete Message?");
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                if (which == 0)
-                                {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
 
-                            }
-                        });
-                        builder.show();
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
+                        holder.itemView.getContext().startActivity(intent);
+//                        CharSequence options[] = new  CharSequence[]
+//                                {
+//                                        "Download and View This Document"
+//                                };
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+//                        //builder.setTitle("Delete Message?");
+//                        builder.setItems(options, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which)
+//                            {
+//                                if (which == 0)
+//                                {
+//                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getDocument()));
+//                                    holder.itemView.getContext().startActivity(intent);
+//                                }
+//
+//                            }
+//                        });
+//                        builder.show();
                     }
 //                    else if (userMessagesList.get(position).getType().equals("text"))
 //                    {
@@ -394,37 +466,66 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //                    }
                     else if (userMessagesList.get(position).getType().equals("image"))
                     {
-                        CharSequence options[] = new  CharSequence[]
-                                {
-                                        "View This Image",
-                                        "Download Image"
-                                };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        //builder.setTitle("Delete Message?");
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-
-                                if (which == 0)
-                                {
-                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
-                                    intent.putExtra("url", userMessagesList.get(position).getImage());
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-
-                                else if (which == 1)
-                                {
-                                    //Save to Device from Campus24
-                                }
-
-                            }
-                        });
-                        builder.show();
+                        Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
+                        intent.putExtra("url", userMessagesList.get(position).getImage());
+                        holder.itemView.getContext().startActivity(intent);
+//                        CharSequence options[] = new  CharSequence[]
+//                                {
+//                                        "View This Image",
+//                                        "Download Image"
+//                                };
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+//                        //builder.setTitle("Delete Message?");
+//                        builder.setItems(options, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which)
+//                            {
+//
+//                                if (which == 0)
+//                                {
+//                                    Intent intent = new Intent(holder.itemView.getContext(), ImageViewerActivity.class);
+//                                    intent.putExtra("url", userMessagesList.get(position).getImage());
+//                                    holder.itemView.getContext().startActivity(intent);
+//                                }
+//
+//                                else if (which == 1)
+//                                {
+//                                    //Save to Device from Campus24
+//                                }
+//
+//                            }
+//                        });
+//                        builder.show();
                     }
                 }
+
             });
+//            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//                BottomSheetDialog commentMenuDialog;
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    if (userMessagesList.get(position).getType().equals("text"))
+//                    {
+//                        commentMenuDialog = new BottomSheetDialog(holder.itemView.getContext());
+//                        commentMenuDialog.setContentView(R.layout.dialog_menu);
+//                        Toast.makeText(holder.itemView.getContext(),fromUserID + "\n" + messageSenderID,Toast.LENGTH_LONG).show();
+//                        commentMenuDialog.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                deleteMessageForEveryone(position, holder);
+//                                commentMenuDialog.dismiss();
+//                            }
+//                        });
+//                        commentMenuDialog.setCanceledOnTouchOutside(TRUE);
+//                    }
+//                    Objects.requireNonNull(commentMenuDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                    commentMenuDialog.show();
+//                    return false;
+//                }
+//            });
         }
+
+
    }
 
 
