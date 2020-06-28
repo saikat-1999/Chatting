@@ -79,6 +79,7 @@
             android:layout_marginBottom="55dp"
             android:paddingBottom="8dp"
             android:clipToPadding="false"
+            android:overScrollMode="ifContentScrolls"
             android:layout_above="@id/chat_linear_layout" />
 
         <LinearLayout
