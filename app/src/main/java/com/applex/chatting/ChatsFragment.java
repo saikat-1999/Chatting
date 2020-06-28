@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +31,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -85,26 +89,30 @@ public class ChatsFragment extends Fragment {
 //                final String[] retImage = {"defaultimage"};
 
                 FirebaseFirestore.getInstance().collection("Users").document(chats.getReceiverUid())
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task)
-                    {
-                        if (task.isSuccessful())
-                        {
-                            UserModel userModel = task.getResult().toObject(UserModel.class);
-                            if (userModel.getIsOnline() == 1)
-                            {
-                                chatsViewHolder.online.setVisibility(View.VISIBLE);
-                            }
-                            else
-                            {
-                                chatsViewHolder.online.setVisibility(View.GONE);
-                            }
+                        .addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                                if (e!=null)
+                                {
+                                    Log.w("TAG", "listen:error", e);
+                                    return;
+                                }
+                                else
+                                {
+                                    UserModel userModel = documentSnapshot.toObject(UserModel.class);
+                                    if (userModel.getIsOnline() == 1)
+                                    {
+                                        chatsViewHolder.online.setVisibility(View.VISIBLE);
+                                    }
+                                    else
+                                    {
+                                        chatsViewHolder.online.setVisibility(View.GONE);
+                                    }
 
-                        }
-                    }
-                });
+                                }
+                            }
+                        });
+
                 chatsViewHolder.userStatus.setText(chats.getLastMessage());
                 chatsViewHolder.userName.setText(chats.getReceiver());
                 SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
