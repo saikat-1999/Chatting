@@ -122,7 +122,7 @@ public class ChatActivity extends AppCompatActivity {
         Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_baseline_person_24).into(userImage);
         toUid = getIntent().getStringExtra("Uid");
         RoomID = getIntent().getStringExtra("ID");
-        //DisplayLastSeen();
+        DisplayLastSeen();
 
        MessageInputText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -240,18 +240,33 @@ public class ChatActivity extends AppCompatActivity {
                                                     .update("seen",1);
                                         }
                                         messagesList.add(messages);
-                                        messageAdapter.notifyDataSetChanged();
+                                        messageAdapter.notifyItemInserted(messagesList.size() - 1);
                                         userMessagesList.clearOnScrollListeners();
                                         userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
                                         break;
                                     case MODIFIED:
-                                        messageAdapter.notifyDataSetChanged();
+                                        Messages messagesMod = dc.getDocument().toObject(Messages.class);
+                                        messagesMod.setDocID(dc.getDocument().getId());
+                                        for(int i = 0; i < messagesList.size(); i++) {
+                                            Messages message = messagesList.get(i);
+                                            if(message.getDocID() == messagesMod.getDocID()) {
+                                                messagesList.remove(i);
+                                                messagesList.add(i, messagesMod);
+                                                messageAdapter.notifyItemChanged(i);
+                                            }
+                                        }
                                         break;
                                     case REMOVED:
                                         Messages messagesDel = dc.getDocument().toObject(Messages.class);
                                         messagesDel.setDocID(dc.getDocument().getId());
-                                        messagesList.remove(messagesDel);
-                                        messageAdapter.notifyDataSetChanged();
+                                        Toast.makeText(getApplicationContext(), messagesDel.getMessage(), Toast.LENGTH_SHORT).show();
+                                        for(int i = 0; i < messagesList.size(); i++) {
+                                            Messages message = messagesList.get(i);
+                                            if(message.getDocID().matches(messagesDel.getDocID())) {
+                                                messagesList.remove(i);
+                                                messageAdapter.notifyItemRemoved(i);
+                                            }
+                                        }
                                         break;
 
                                 }
@@ -585,63 +600,66 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-//    private void DisplayLastSeen(){
-//        FirebaseFirestore.getInstance().collection("Users").document(getIntent().getStringExtra("Uid"))
-//                .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-//                        if (e!=null) {
-//                            Log.w("TAG", "listen:error", e);
-//                            return;
-//                        }
-//                        if(documentSnapshot != null && documentSnapshot.exists()) {
-//                            UserModel userModel = documentSnapshot.toObject(UserModel.class);
-//                            if (userModel.getIsOnline() == 1)
-//                            {
-//                                userLastSeen.setText("Online");
-//                                listener = FirebaseFirestore.getInstance().document("Rooms/"+RoomID+"/")
-//                                        .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
-//                                            @Override
-//                                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-//                                                if (e!=null) {
-//                                                    Log.w("TAG", "listen:error", e);
-//                                                    return;
-//                                                }
-//                                                if(documentSnapshot != null && documentSnapshot.exists()) {
-//                                                    String isTyping = documentSnapshot.getString("typing."+toUid);
-//                                                    String isBlocked = documentSnapshot.getString("block."+toUid);
-//                                                    if(isBlocked != null && isBlocked.matches("1")){ // checking if blockd has been set to 1 aginst Sender Uid
-//                                                        userLastSeen.setText("BLOCKED");
-//                                                        SendMessageButton.setOnClickListener(new View.OnClickListener() {
-//                                                            @Override
-//                                                            public void onClick(View v) {
-//                                                                Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
-//                                                            }
-//                                                        });
-//                                                    }
-//                                                    if(isTyping != null && isTyping.matches("1")){
-//                                                        userLastSeen.setText("Typing...");
-//                                                    }
-//                                                }
-//                                            }
-//                                        });
-//                            }
-//                            else {
-//                                listener.remove();
-//                                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
-//                                String date = sfd.format(userModel.getLastSeen().toDate());
-//                                userLastSeen.setText(date);
-//                            }
-//                            Picasso.get().load(userModel.getImage()).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
-//
-//                        }
-//                        else {
-//                            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//
-//    }
+    private void DisplayLastSeen(){
+        FirebaseFirestore.getInstance().collection("Users").document(getIntent().getStringExtra("Uid"))
+                .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e!=null) {
+                            Log.w("TAG", "listen:error", e);
+                            return;
+                        }
+                        if(documentSnapshot != null && documentSnapshot.exists()) {
+                            UserModel userModel = documentSnapshot.toObject(UserModel.class);
+                            if (userModel.getIsOnline() == 1)
+                            {
+                                userLastSeen.setText("Online");
+                                listener = FirebaseFirestore.getInstance().document("Rooms/"+RoomID+"/")
+                                        .addSnapshotListener(ChatActivity.this, new EventListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                                                if (e!=null) {
+                                                    Log.w("TAG", "listen:error", e);
+                                                    return;
+                                                }
+                                                if(documentSnapshot != null && documentSnapshot.exists()) {
+                                                    Long isTyping = documentSnapshot.getLong("typing."+toUid);
+                                                    Long isBlocked = documentSnapshot.getLong("block."+toUid);
+                                                    if(isBlocked != null && isBlocked == 1){ // checking if blockd has been set to 1 aginst Sender Uid
+                                                        userLastSeen.setText("BLOCKED");
+                                                        SendMessageButton.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    }
+                                                    if(isTyping != null && isTyping == 1){
+                                                        userLastSeen.setText("is typing...");
+                                                    }
+                                                    else {
+                                                        userLastSeen.setText("Online");
+                                                    }
+                                                }
+                                            }
+                                        });
+                            }
+                            else {
+                                listener.remove();
+                                SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
+                                String date = sfd.format(userModel.getLastSeen().toDate());
+                                userLastSeen.setText(date);
+                            }
+                            Picasso.get().load(userModel.getImage()).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
+
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+    }
 
     private void SendMessage(){
 
