@@ -129,13 +129,13 @@
                 android:layout_height="wrap_content"
                 android:text="10/10/10"
                 android:textSize="12sp"
-                android:paddingTop="4dp"
+                android:paddingVertical="2dp"
                 android:textColor="#aaffffff"/>
 
             <ImageView
                 android:id="@+id/seen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="20dp"
                 android:paddingStart="5dp"
                 android:src="@drawable/ic_baseline_done_all_24"/>
 
