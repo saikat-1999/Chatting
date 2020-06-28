@@ -81,11 +81,4 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#55212121"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="15dp"
-        android:layout_marginStart="90dp"/>
 </RelativeLayout>
