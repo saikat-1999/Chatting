@@ -5,8 +5,8 @@
     android:id="@+id/main_app_bar"
     android:background="#f8f8f8"
     android:layout_width="match_parent"
-    android:layout_height="55dp"
-    android:elevation="5dp"
+    android:layout_height="60dp"
+    android:elevation="10dp"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
 </androidx.appcompat.widget.Toolbar>
