@@ -103,11 +103,12 @@ public class ChatActivity extends AppCompatActivity {
     private Uri fileUri;
     private ProgressDialog loadingBar;
 
-    private ListenerRegistration listener;
+    private ListenerRegistration listener, initListener;
 
 
     boolean isTyping= false;
     boolean statusBlock = false;
+    boolean newMessage = false;
 
     long delay = 1500; // 1 seconds after user stops typing
     long last_text_edit = 0;
@@ -167,6 +168,7 @@ public class ChatActivity extends AppCompatActivity {
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                newMessage = true;
                 SendMessage();
             }
         });
@@ -191,6 +193,7 @@ public class ChatActivity extends AppCompatActivity {
                     {
                         if (which == 0)
                         {
+                            newMessage = true;
                             checker = "image";
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -200,7 +203,7 @@ public class ChatActivity extends AppCompatActivity {
                         if (which == 1)
                         {
                             checker = "pdf";
-
+                            newMessage = true
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.setType("application/pdf");
@@ -209,7 +212,7 @@ public class ChatActivity extends AppCompatActivity {
                         if (which == 2)
                         {
                             checker = "docx";
-
+                            newMessage = true;
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.setType("application/msword");
@@ -221,9 +224,9 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseFirestore.getInstance().collection("Rooms/"+ RoomID+"/Messages")
+        initListener = FirebaseFirestore.getInstance().collection("Rooms/"+ RoomID+"/Messages")
                 .orderBy("timestamp")
-                .addSnapshotListener(ChatActivity.this, new EventListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e)
                     {
@@ -785,27 +788,37 @@ public class ChatActivity extends AppCompatActivity {
 
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(messagesList.get(messagesList.size()-1).getType().matches("text")){
-            FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
-                    .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
-        }
-        else if(messagesList.get(messagesList.size()-1).getType().matches("image")) {
+        initListener.remove();
+        if(newMessage){
+            if(messagesList.get(messagesList.size()-1).getType().matches("text")){
+                FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+                        .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
+            }
+            else if(messagesList.get(messagesList.size()-1).getType().matches("image")) {
 
-            if (messagesList.get(messagesList.size() - 1).getMessage() != null) {
-                FirebaseFirestore.getInstance().document("Users/" + FirebaseAuth.getInstance().getUid() + "/ChatRooms/" + getIntent().getStringExtra("Uid"))
-                        .update("lastMessage", "\uD83D\uDCF7 " + messagesList.get(messagesList.size() - 1).getMessage(), "timestamp", messagesList.get(messagesList.size() - 1).getTimestamp());
+                if (messagesList.get(messagesList.size() - 1).getMessage() != null) {
+                    FirebaseFirestore.getInstance().document("Users/" + FirebaseAuth.getInstance().getUid() + "/ChatRooms/" + getIntent().getStringExtra("Uid"))
+                            .update("lastMessage", "\uD83D\uDCF7 " + messagesList.get(messagesList.size() - 1).getMessage(), "timestamp", messagesList.get(messagesList.size() - 1).getTimestamp());
+                }
+                else {
+                    FirebaseFirestore.getInstance().document("Users/" + FirebaseAuth.getInstance().getUid() + "/ChatRooms/" + getIntent().getStringExtra("Uid"))
+                            .update("lastMessage", "\uD83D\uDCF7 Image", "timestamp", messagesList.get(messagesList.size() - 1).getTimestamp());
+                }
             }
             else {
-                FirebaseFirestore.getInstance().document("Users/" + FirebaseAuth.getInstance().getUid() + "/ChatRooms/" + getIntent().getStringExtra("Uid"))
-                        .update("lastMessage", "\uD83D\uDCF7 Image", "timestamp", messagesList.get(messagesList.size() - 1).getTimestamp());
+                FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+                        .update("lastMessage", "\uD83D\uDCC4 Document", "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
             }
         }
-        else {
-            FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
-                    .update("lastMessage", "\uD83D\uDCC4 Document", "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
-        }
+
 
         if(isTyping){
             FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
@@ -816,11 +829,12 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (messagesList.size()>0){
-            FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
-                    .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
-
-        }
+//        initListener.remove();
+//        if (messagesList.size()>0){
+//            FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+//                    .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
+//
+//        }
         if(isTyping){
             FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
                     .update("typing."+FirebaseAuth.getInstance().getUid(), 0);

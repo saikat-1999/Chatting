@@ -37,19 +37,22 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:gravity="bottom">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#aa000000"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Type here..."
+            android:background="@null"
             android:gravity="center_vertical"
             android:paddingHorizontal="15dp"
+            android:layout_marginEnd="65dp"
             android:textColorHint="#aaffffff"
             android:maxLines="6"
             android:textColor="#fff"
@@ -57,15 +60,16 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/send"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="-65dp"
             android:layout_alignEnd="@+id/edittext"
             android:background="@color/design_default_color_secondary"
             android:layout_marginBottom="15dp"
             android:layout_marginEnd="15dp"
             android:src="@drawable/ic_baseline_send_24" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

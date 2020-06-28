@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +63,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         TextView docSenderTime, docReceiverTime;
         public ImageView messageSenderPicture, messageReceiverPicture;
         public CardView senderPicCard, recPicCard;
-        LinearLayout senderDocCard, recDocCard;
+        CardView senderDocCard, recDocCard;
         public LinearLayout send;
         public LinearLayout receive;
         ImageView seen;
@@ -81,9 +83,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             messageSenderPicture = itemView.findViewById(R.id.message_sender_image_view);
             senderTime = itemView.findViewById(R.id.sender_timestamp);
             receiverTime = itemView.findViewById(R.id.receiver_timestamp);
-
-            docReceiverTime = itemView.findViewById(R.id.doc_receiver_timestamp);
-            docSenderTime = itemView.findViewById(R.id.doc_sender_timestamp);
 
             send = itemView.findViewById(R.id.send);
             receive = itemView.findViewById(R.id.receive);
@@ -128,7 +127,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.senderLink.setVisibility(View.GONE);
         holder.receiverLink.setVisibility(View.GONE);
         holder.recDocCard.setVisibility(View.GONE);
-        holder.recDocCard.setVisibility(View.GONE);
+        holder.senderDocCard.setVisibility(View.GONE);
         holder.send.setVisibility(View.GONE);
         holder.receive.setVisibility(View.GONE);
         holder.senderPicCard.setVisibility(View.GONE);
@@ -163,6 +162,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                             @Override
                             public void onError(Exception e) {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //do stuff like remove view etc
+                                        holder.senderLink.setVisibility(View.GONE);
+                                    }
+                                });
                             }
                         });
                     }
@@ -190,6 +196,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                             @Override
                             public void onError(Exception e) {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //do stuff like remove view etc
+                                        holder.receiverLink.setVisibility(View.GONE);
+                                    }
+                                });
                             }
                         });
                     }
@@ -263,10 +276,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx"))
         {
             if (fromUserID.equals(messageSenderID)) {
+                holder.send.setVisibility(View.VISIBLE);
                 SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
                 String date = sfd.format(messages.getTimestamp().toDate());
-                holder.docSenderTime.setText(date);
+                holder.senderTime.setText(date);
                 holder.senderDocCard.setVisibility(View.VISIBLE);
+                holder.senderMessageText.setVisibility(View.GONE);
 
                 holder.senderDocCard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -285,9 +300,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
             else
             {
+                holder.receive.setVisibility(View.VISIBLE);
                 SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
                 String date = sfd.format(messages.getTimestamp().toDate());
-                holder.docReceiverTime.setText(date);
+                holder.receiverTime.setText(date);
+                holder.receiverMessageText.setVisibility(View.GONE);
                 holder.recDocCard.setVisibility(View.VISIBLE);
 
                 holder.recDocCard.setOnClickListener(new View.OnClickListener() {

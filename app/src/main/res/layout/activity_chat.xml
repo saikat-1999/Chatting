@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ChatActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -76,7 +77,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:layout_marginBottom="55dp"
-
             android:paddingBottom="8dp"
             android:clipToPadding="false"
             android:layout_above="@id/chat_linear_layout" />
@@ -116,6 +116,7 @@
                 android:src="@drawable/ic_baseline_send_24"
                 android:layout_marginStart="-55dp"
                 android:backgroundTint="@android:color/white"/>
+
         </LinearLayout>
 
 

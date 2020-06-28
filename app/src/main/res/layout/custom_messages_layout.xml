@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -38,6 +39,42 @@
 
         </androidx.cardview.widget.CardView>
 
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/recDocCard"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="#E0FFC7"
+            app:cardCornerRadius="10dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginHorizontal="6dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/message_receiver_doc_view"
+                    android:layout_width="50dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_baseline_insert_drive_file_24"
+                    android:scaleType="centerCrop"/>
+                <TextView
+                    android:id="@+id/docname"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/cardview_dark_background"
+                    android:text="Doc Name"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:paddingHorizontal="10dp"/>
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
         <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
             android:id="@+id/LinkPreViewReceiver"
             android:layout_width="match_parent"
@@ -66,6 +103,7 @@
             android:paddingHorizontal="10dp"
             android:textColor="#868686"/>
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/send"
@@ -96,10 +134,45 @@
                 android:id="@+id/message_sender_image_view"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:scaleType="centerCrop"/>
 
         </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/senderDocCard"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="#E0FFC7"
+            app:cardCornerRadius="10dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginHorizontal="6dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/message_sender_doc_view"
+                    android:layout_width="50dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_baseline_insert_drive_file_24"
+                    android:scaleType="centerCrop"/>
+                <TextView
+                    android:id="@+id/senderdocname"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/cardview_dark_background"
+                    android:text="Doc Name"
+                    android:gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:paddingHorizontal="10dp"/>
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
 
         <com.applex.chatting.LinkPreview.ApplexLinkPreviewShort
             android:id="@+id/LinkPreViewSender"
@@ -107,7 +180,9 @@
             android:layout_height="wrap_content"
             android:minWidth="240dp"
             android:visibility="gone"
-            android:minHeight="82dp" />
+            android:minHeight="82dp"
+            tools:ignore="MissingClass" />
+
 
         <TextView
             android:id="@+id/sender_message_text"
@@ -143,120 +218,5 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/senderDocCard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:background="#E0FFC7"
-            app:cardCornerRadius="10dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginHorizontal="10dp"
-            android:visibility="visible">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/message_sender_doc_view"
-                    android:layout_width="50dp"
-                    android:layout_height="60dp"
-                    android:layout_marginHorizontal="5dp"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_baseline_insert_drive_file_24"
-                    android:scaleType="centerCrop"/>
-                <TextView
-                    android:id="@+id/senderdocname"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textColor="@color/cardview_dark_background"
-                    android:text="Doc Name"
-                    android:gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:paddingHorizontal="10dp"/>
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/doc_sender_timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10/10/10"
-            android:layout_marginTop="3dp"
-            android:layout_marginHorizontal="10dp"
-            android:paddingVertical="5dp"
-            android:background="@drawable/sender_messages_layout"
-            android:textSize="12sp"
-            android:paddingHorizontal="10dp"
-            android:layout_gravity="end"
-            android:elevation="2dp"
-            android:layout_marginBottom="4dp"
-            android:textColor="#aaffffff" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/recDocCard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:background="#E0FFC7"
-            app:cardCornerRadius="10dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginHorizontal="10dp"
-            android:visibility="visible">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/message_receiver_doc_view"
-                    android:layout_width="50dp"
-                    android:layout_height="60dp"
-                    android:layout_marginHorizontal="5dp"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_baseline_insert_drive_file_24"
-                    android:scaleType="centerCrop"/>
-                <TextView
-                    android:id="@+id/docname"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textColor="@color/cardview_dark_background"
-                    android:text="Doc Name"
-                    android:gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:paddingHorizontal="10dp"/>
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/doc_receiver_timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10/10/10"
-            android:layout_marginTop="3dp"
-            android:layout_marginHorizontal="10dp"
-            android:paddingVertical="5dp"
-            android:background="@drawable/receiver_messages_layout"
-            android:elevation="2dp"
-            android:textSize="12sp"
-            android:layout_marginBottom="4dp"
-            android:paddingHorizontal="10dp"
-            android:textColor="#868686" />
-    </LinearLayout>
 
 </RelativeLayout>
