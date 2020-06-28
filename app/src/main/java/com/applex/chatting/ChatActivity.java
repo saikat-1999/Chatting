@@ -34,8 +34,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -118,7 +120,7 @@ public class ChatActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-       InitializeControllers();
+        InitializeControllers();
 
         userName.setText(getIntent().getStringExtra("Name"));
         Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
@@ -358,13 +360,12 @@ public class ChatActivity extends AppCompatActivity {
         chattoolbar = findViewById(R.id.chat_toolbar);
         setSupportActionBar(chattoolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
 
-        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View actionBarView =  layoutInflater.inflate(R.layout.custom_chat_bar,null);
-        actionBar.setCustomView(actionBarView);
+//        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View actionBarView =  layoutInflater.inflate(R.layout.custom_chat_bar, null);
+//        actionBar.setCustomView(actionBarView);
 
+        ImageView back = findViewById(R.id.back);
         userImage = findViewById(R.id.custom_profile_IMAGE);
         userName = findViewById(R.id.custom_profile_name);
         userLastSeen = findViewById(R.id.custom_user_last_seen);
@@ -377,6 +378,13 @@ public class ChatActivity extends AppCompatActivity {
         linearLayoutManager = new LinearLayoutManager(this);
         userMessagesList.setLayoutManager(linearLayoutManager);
         userMessagesList.setAdapter(messageAdapter);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChatActivity.super.onBackPressed();
+            }
+        });
 
         messageAdapter.onLongClickListener((position) ->
         {
@@ -413,9 +421,9 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        if(item.getItemId() == android.R.id.home){
-            super.onBackPressed();
-        }
+//        if(item.getItemId() == android.R.id.home){
+//            super.onBackPressed();
+//        }
         if (item.getItemId() == R.id.show_profile)
         {
             Toast.makeText(getApplicationContext(), "Send to profile", Toast.LENGTH_SHORT).show();

@@ -6,11 +6,70 @@
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
 
-    <include
-        android:id="@+id/chat_toolbar"
-        layout="@layout/app_bar_layout">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="-12dp"
+        android:id="@+id/chat_toolbar">
 
-    </include>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="40dp"
+                android:layout_height="60dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/custom_profile_IMAGE"
+                android:layout_width="47dp"
+                android:layout_height="47dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_account_circle_black_24dp"
+                android:cropToPadding="true"
+                android:layout_marginEnd="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/custom_profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/custom_profile_IMAGE"
+                    android:text="Display User Name"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/custom_user_last_seen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/custom_profile_name"
+                    android:layout_toRightOf="@id/custom_profile_IMAGE"
+                    android:layout_marginTop="3dp"
+                    android:text="Last Seen"
+                    android:textColor="#212121"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+<!--    <include-->
+<!--        android:id="@+id/chat_toolbar"-->
+<!--        layout="@layout/app_bar_layout">-->
+
+<!--    </include>-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/private_messages_list_of_users"
