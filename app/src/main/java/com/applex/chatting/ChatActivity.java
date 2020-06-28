@@ -203,7 +203,7 @@ public class ChatActivity extends AppCompatActivity {
                         if (which == 1)
                         {
                             checker = "pdf";
-                            newMessage = true
+                            newMessage = true;
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             intent.setType("application/pdf");
