@@ -249,7 +249,7 @@ public class ChatActivity extends AppCompatActivity {
                                         messagesMod.setDocID(dc.getDocument().getId());
                                         for(int i = 0; i < messagesList.size(); i++) {
                                             Messages message = messagesList.get(i);
-                                            if(message.getDocID() == messagesMod.getDocID()) {
+                                            if(message.getDocID().matches(messagesMod.getDocID())) {
                                                 messagesList.remove(i);
                                                 messagesList.add(i, messagesMod);
                                                 messageAdapter.notifyItemChanged(i);
