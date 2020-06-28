@@ -104,7 +104,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     boolean isTyping= false;
-    long delay = 2000; // 1 seconds after user stops typing
+    long delay = 1500; // 1 seconds after user stops typing
     long last_text_edit = 0;
     Handler handler = new Handler();
 
@@ -608,9 +608,9 @@ public class ChatActivity extends AppCompatActivity {
                                                     return;
                                                 }
                                                 if(documentSnapshot != null && documentSnapshot.exists()) {
-                                                    String isTyping = documentSnapshot.getString("typing."+toUid);
-                                                    String isBlocked = documentSnapshot.getString("block."+toUid);
-                                                    if(isBlocked != null && isBlocked.matches("1")){ // checking if blockd has been set to 1 aginst Sender Uid
+                                                    Long isTyping = documentSnapshot.getLong("typing."+toUid);
+                                                    Long isBlocked = documentSnapshot.getLong("block."+toUid);
+                                                    if(isBlocked != null && isBlocked==1){ // checking if blockd has been set to 1 aginst Sender Uid
                                                         userLastSeen.setText("BLOCKED");
                                                         SendMessageButton.setOnClickListener(new View.OnClickListener() {
                                                             @Override
@@ -619,8 +619,11 @@ public class ChatActivity extends AppCompatActivity {
                                                             }
                                                         });
                                                     }
-                                                    if(isTyping != null && isTyping.matches("1")){
-                                                        userLastSeen.setText("Typing...");
+                                                    if(isTyping != null && isTyping == 1){
+                                                        userLastSeen.setText("is typing...");
+                                                    }
+                                                    else {
+                                                        userLastSeen.setText("Online");
                                                     }
                                                 }
                                             }
