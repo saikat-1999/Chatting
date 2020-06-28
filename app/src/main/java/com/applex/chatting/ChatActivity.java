@@ -34,6 +34,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -121,6 +122,7 @@ public class ChatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         InitializeControllers();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         userName.setText(getIntent().getStringExtra("Name"));
         Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
