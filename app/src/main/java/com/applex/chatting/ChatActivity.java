@@ -785,8 +785,26 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
-                .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
+        if(messagesList.get(messagesList.size()-1).getType().matches("text")){
+            FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+                    .update("lastMessage", messagesList.get(messagesList.size()-1).getMessage(), "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
+        }
+        else if(messagesList.get(messagesList.size()-1).getType().matches("image")) {
+
+            if (messagesList.get(messagesList.size() - 1).getMessage() != null) {
+                FirebaseFirestore.getInstance().document("Users/" + FirebaseAuth.getInstance().getUid() + "/ChatRooms/" + getIntent().getStringExtra("Uid"))
+                        .update("lastMessage", "\uD83D\uDCF7 " + messagesList.get(messagesList.size() - 1).getMessage(), "timestamp", messagesList.get(messagesList.size() - 1).getTimestamp());
+            }
+            else {
+                FirebaseFirestore.getInstance().document("Users/" + FirebaseAuth.getInstance().getUid() + "/ChatRooms/" + getIntent().getStringExtra("Uid"))
+                        .update("lastMessage", "\uD83D\uDCF7 Image", "timestamp", messagesList.get(messagesList.size() - 1).getTimestamp());
+            }
+        }
+        else {
+            FirebaseFirestore.getInstance().document("Users/"+FirebaseAuth.getInstance().getUid()+"/ChatRooms/"+getIntent().getStringExtra("Uid"))
+                    .update("lastMessage", "\uD83D\uDCC4 Document", "timestamp", messagesList.get(messagesList.size()-1).getTimestamp());
+        }
+
         if(isTyping){
             FirebaseFirestore.getInstance().collection("Rooms").document(getIntent().getStringExtra("ID"))
                     .update("typing."+FirebaseAuth.getInstance().getUid(), 0);
