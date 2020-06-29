@@ -272,7 +272,7 @@ public class ChatActivity extends AppCompatActivity {
                                         messagesList.add(messages);
                                         messageAdapter.notifyItemInserted(messagesList.size() - 1);
                                         userMessagesList.clearOnScrollListeners();
-                                        userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
+//                                        userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
                                         break;
                                     case MODIFIED:
                                         Messages messagesMod = dc.getDocument().toObject(Messages.class);
@@ -410,6 +410,7 @@ public class ChatActivity extends AppCompatActivity {
         messageAdapter = new MessageAdapter(messagesList, getIntent().getStringExtra("ID"));
         userMessagesList = (RecyclerView) findViewById(R.id.private_messages_list_of_users);
         linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
         userMessagesList.setLayoutManager(linearLayoutManager);
         userMessagesList.setAdapter(messageAdapter);
 
