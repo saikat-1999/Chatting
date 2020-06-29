@@ -381,7 +381,13 @@ public class ChatActivity extends AppCompatActivity {
     private Runnable input_finish_checker = () -> {
         if (System.currentTimeMillis() > (last_text_edit + delay)) {
             FirebaseFirestore.getInstance().collection("Rooms").document(RoomID)
-                    .update("typing."+FirebaseAuth.getInstance().getUid(), 0);
+                    .update("typing."+FirebaseAuth.getInstance().getUid(), 0)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            isTyping = false;
+                        }
+                    });
         }
     };
     ////STOP TYPING CHECK////
