@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:id="@+id/chatview"
     tools:context=".ChatActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -26,8 +26,7 @@
                 android:layout_width="40dp"
                 android:layout_height="60dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                />
+                android:src="@drawable/ic_baseline_arrow_back_24" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/custom_profile_IMAGE"
@@ -106,6 +105,7 @@
                 android:hint="Type message here"
                 android:paddingHorizontal="10dp"
                 android:maxLines="5"
+                android:imeOptions="flagNoExtractUi"
                 android:layout_marginVertical="5dp"
                 android:background="@drawable/background_rectangle"
                 android:layout_marginEnd="55dp"/>
