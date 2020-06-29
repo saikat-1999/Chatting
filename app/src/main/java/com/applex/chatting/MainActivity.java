@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +17,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,8 +40,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LifecycleObserver {
 
     private Toolbar mToolBar;
     private ViewPager myViewPager;
@@ -50,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+
         mAuth = FirebaseAuth.getInstance();
 
         RootRef = FirebaseDatabase.getInstance().getReference();
@@ -64,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         myTabLayout = (TabLayout) findViewById(R.id.main_tabs);
         myTabLayout.setupWithViewPager(myViewPager);
+
     }
 
     @Override
@@ -83,16 +96,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-////    protected void onPause() {
-////        super.onPause();
-////        FirebaseUser currentUser = mAuth.getCurrentUser();
-////
-////        if(currentUser!=null){
-////            updateUserStatus(false);
-////        }
-////    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -102,6 +105,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public void onAppBackgrounded() {
+        // App in background
+        updateUserStatus(false);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    public void onAppForegrounded() {
+        // App in foreground
+        updateUserStatus(true);
+    }
 
     private void VerifyUserExistance()
     {
@@ -118,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
 //        RootRef.child("Users").child(currentUserID).addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -239,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(findFriendsIntent);
     }
 
-    private void updateUserStatus(boolean isOnline){
+    public void updateUserStatus(boolean isOnline){
 
 //        String saveCurrentTime, saveCurrentDate;
 //

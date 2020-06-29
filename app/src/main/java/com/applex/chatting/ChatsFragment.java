@@ -153,7 +153,7 @@ public class ChatsFragment extends Fragment {
 
     public static class ChatsViewHolder extends RecyclerView.ViewHolder
     {
-        CircleImageView profileImage;
+        ImageView profileImage;
         TextView userStatus, userName, time;
         ImageView online;
 

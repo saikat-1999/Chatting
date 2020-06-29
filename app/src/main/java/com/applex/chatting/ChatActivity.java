@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -183,7 +185,6 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -857,6 +858,19 @@ public class ChatActivity extends AppCompatActivity {
 //
 //        }
 
+    }
+
+    private boolean isApplicationBroughtToBackground() {
+        ActivityManager am = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+        if (!tasks.isEmpty()) {
+            ComponentName topActivity = tasks.get(0).topActivity;
+            if (!topActivity.getPackageName().equals(getApplicationContext().getPackageName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
