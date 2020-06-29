@@ -38,10 +38,22 @@
                 android:cropToPadding="true"
                 android:layout_marginEnd="10dp" />
 
+            <TextView
+                android:id="@+id/custom_profile_name_blocked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/custom_profile_IMAGE"
+                android:text="Display User Name"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:id="@+id/toolbarLL">
 
                 <TextView
                     android:id="@+id/custom_profile_name"
@@ -79,6 +91,8 @@
             android:layout_marginBottom="55dp"
             android:paddingBottom="8dp"
             android:clipToPadding="false"
+            android:windowSoftInputMode="adjustResize"
+            android:fitsSystemWindows="true"
             android:overScrollMode="ifContentScrolls"
             android:layout_above="@id/chat_linear_layout" />
 

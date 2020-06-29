@@ -42,6 +42,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,8 +84,8 @@ import static java.lang.Boolean.TRUE;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private String ts, toUid, RoomID;
-    private TextView userName,userLastSeen;
+    private String ts, toUid, RoomID, user;
+    private TextView userName,userLastSeen, userName_onBlocked;
     private CircleImageView userImage;
     private Toolbar chattoolbar;
     private ImageButton SendMessageButton, SendFilesButton;
@@ -92,6 +93,8 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private byte[] pic;
     private ImageCompressor imageCompressor;
+
+    private LinearLayout toolbarLL;
 
     private BottomSheetDialog commentMenuDialog;
 
@@ -123,11 +126,10 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         mAuth = FirebaseAuth.getInstance();
         InitializeControllers();
 
+        user = getIntent().getStringExtra("Name");
         userName.setText(getIntent().getStringExtra("Name"));
         Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
         toUid = getIntent().getStringExtra("Uid");
@@ -147,17 +149,6 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        MessageInputText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                MessageInputText.requestFocus();
-////                MessageInputText.setFocusableInTouchMode(true);
-////                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-////                imm.showSoftInput(MessageInputText, InputMethodManager.SHOW_IMPLICIT);
-//                userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
-//            }
-//        });
 
        MessageInputText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -410,6 +401,8 @@ public class ChatActivity extends AppCompatActivity {
         SendMessageButton = findViewById(R.id.send_message_btn);
         SendFilesButton = findViewById(R.id.send_files_btn);
         MessageInputText = findViewById(R.id.input_message);
+        userName_onBlocked = findViewById(R.id.custom_profile_name_blocked);
+        toolbarLL = findViewById(R.id.toolbarLL);
 
         messageAdapter = new MessageAdapter(messagesList, getIntent().getStringExtra("ID"));
         userMessagesList = (RecyclerView) findViewById(R.id.private_messages_list_of_users);
@@ -719,8 +712,11 @@ public class ChatActivity extends AppCompatActivity {
                                         @Override
                                         public void onClick(View v) {
                                             Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
-                                            userLastSeen.setText("");
-                                            userLastSeen.setTextColor(getResources().getColor(android.R.color.black));
+                                            toolbarLL.setVisibility(View.GONE);
+                                            userName_onBlocked.setVisibility(View.VISIBLE);
+                                            userName_onBlocked.setText(user);
+//                                            userLastSeen.setText("");
+//                                            userLastSeen.setTextColor(getResources().getColor(android.R.color.black));
                                         }
                                     });
                                 }

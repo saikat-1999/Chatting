@@ -19,7 +19,6 @@
         <activity android:name=".ImageViewerActivity" />
         <activity
             android:name=".ChatActivity"
-            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".PhoneLoginActivity" />
         <activity android:name=".ProfileActivity" />
