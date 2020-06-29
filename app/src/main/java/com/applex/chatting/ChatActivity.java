@@ -455,12 +455,10 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.block);
-        if (item.getTitle().equals("Block")) {
+        if (statusBlock) {
             item.setTitle("Unblock");
-            statusBlock = true;
         } else {
             item.setTitle("Block");
-            statusBlock = false;
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -729,13 +727,14 @@ public class ChatActivity extends AppCompatActivity {
                             else {
                                 statusBlock = false;
                                 if(isBlocked != null && isBlocked==1){ // checking if blockd has been set to 1 aginst Sender Uid
+                                    toolbarLL.setVisibility(View.GONE);
+                                    userName_onBlocked.setVisibility(View.VISIBLE);
+                                    userName_onBlocked.setText(user);
                                     SendMessageButton.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
-                                            toolbarLL.setVisibility(View.GONE);
-                                            userName_onBlocked.setVisibility(View.VISIBLE);
-                                            userName_onBlocked.setText(user);
+
 //                                            userLastSeen.setText("");
 //                                            userLastSeen.setTextColor(getResources().getColor(android.R.color.black));
                                         }
@@ -859,19 +858,6 @@ public class ChatActivity extends AppCompatActivity {
 //
 //        }
 
-    }
-
-    private boolean isApplicationBroughtToBackground() {
-        ActivityManager am = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-        if (!tasks.isEmpty()) {
-            ComponentName topActivity = tasks.get(0).topActivity;
-            if (!topActivity.getPackageName().equals(getApplicationContext().getPackageName())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 
