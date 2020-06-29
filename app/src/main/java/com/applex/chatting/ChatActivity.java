@@ -461,6 +461,12 @@ public class ChatActivity extends AppCompatActivity {
                                             statusBlock = true;
                                             userLastSeen.setText("BLOCKED");
                                             userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+                                            SendMessageButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                             listener.remove();
                                         }
                                     });
@@ -480,6 +486,15 @@ public class ChatActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             statusBlock = false;
+                                            SendMessageButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    newMessage = true;
+                                                    SendMessage();
+                                                }
+                                            });
+//                                            userLastSeen.setText("BLOCKED");
+//                                            userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_red_light));
 //                                            listener.remove();
                                         }
                                     });
@@ -669,6 +684,12 @@ public class ChatActivity extends AppCompatActivity {
                                 statusBlock = true;
                                 userLastSeen.setText("BLOCKED");
                                 userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+                                SendMessageButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                             else {
                                 statusBlock = false;
@@ -683,7 +704,7 @@ public class ChatActivity extends AppCompatActivity {
                                 else {
                                     if(isTyping != null && isTyping == 1){
                                         userLastSeen.setText("is typing...");
-                                        userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+                                        userLastSeen.setTextColor(getResources().getColor(R.color.green));
                                     }
                                     else {
                                         listener = FirebaseFirestore.getInstance().collection("Users").document(toUid)
@@ -699,7 +720,7 @@ public class ChatActivity extends AppCompatActivity {
                                                             if (userModel.getIsOnline() == 1)
                                                             {
                                                                 userLastSeen.setText("Online");
-                                                                userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+                                                                userLastSeen.setTextColor(getResources().getColor(R.color.green));
                                                             }
                                                             else {
                                                                 SimpleDateFormat sfd = new SimpleDateFormat("hh:mm a, dd MMMM");
