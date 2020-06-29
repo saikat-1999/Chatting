@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleObserver
         startActivity(findFriendsIntent);
     }
 
-    public void updateUserStatus(boolean isOnline){
+    private void updateUserStatus(boolean isOnline){
 
 //        String saveCurrentTime, saveCurrentDate;
 //
