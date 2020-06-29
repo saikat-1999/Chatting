@@ -136,6 +136,8 @@ public class ChatActivity extends AppCompatActivity {
         RoomID = getIntent().getStringExtra("ID");
         DisplayLastSeen();
 
+        invalidateOptionsMenu();
+
         userMessagesList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -449,6 +451,19 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.block);
+        if (item.getTitle().equals("Block")) {
+            item.setTitle("Unblock");
+            statusBlock = true;
+        } else {
+            item.setTitle("Block");
+            statusBlock = false;
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
 
@@ -471,6 +486,7 @@ public class ChatActivity extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+//                                            invalidateOptionsMenu();
                                             statusBlock = true;
                                             userLastSeen.setText("BLOCKED");
                                             userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_red_light));
@@ -498,6 +514,7 @@ public class ChatActivity extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+//                                            invalidateOptionsMenu();
                                             statusBlock = false;
                                             SendMessageButton.setOnClickListener(new View.OnClickListener() {
                                                 @Override
