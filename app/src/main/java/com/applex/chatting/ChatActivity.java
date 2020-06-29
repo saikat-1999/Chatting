@@ -715,6 +715,8 @@ public class ChatActivity extends AppCompatActivity {
                             Long isBlockedByMe = documentSnapshot.getLong("block."+mAuth.getUid());
                             if(isBlockedByMe != null && isBlockedByMe == 1){
                                 statusBlock = true;
+                                toolbarLL.setVisibility(View.VISIBLE);
+                                userName_onBlocked.setVisibility(View.GONE);
                                 userLastSeen.setText("BLOCKED");
                                 userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_red_light));
                                 SendMessageButton.setOnClickListener(new View.OnClickListener() {
@@ -741,6 +743,8 @@ public class ChatActivity extends AppCompatActivity {
                                     });
                                 }
                                 else {
+                                    toolbarLL.setVisibility(View.VISIBLE);
+                                    userName_onBlocked.setVisibility(View.GONE);
                                     if(isTyping != null && isTyping == 1){
                                         userLastSeen.setText("is typing...");
                                         userLastSeen.setTextColor(getResources().getColor(R.color.green));
