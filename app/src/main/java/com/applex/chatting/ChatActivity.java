@@ -6,6 +6,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +37,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -120,16 +123,26 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        mAuth = FirebaseAuth.getInstance();
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
+        mAuth = FirebaseAuth.getInstance();
         InitializeControllers();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         userName.setText(getIntent().getStringExtra("Name"));
         Picasso.get().load(getIntent().getStringExtra("DP")).placeholder(R.drawable.ic_account_circle_black_24dp).into(userImage);
         toUid = getIntent().getStringExtra("Uid");
         RoomID = getIntent().getStringExtra("ID");
         DisplayLastSeen();
+
+//        MessageInputText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MessageInputText.requestFocus();
+//                MessageInputText.setFocusableInTouchMode(true);
+//                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.showSoftInput(MessageInputText, InputMethodManager.SHOW_IMPLICIT);
+//            }
+//        });
 
        MessageInputText.addTextChangedListener(new TextWatcher() {
             @Override
