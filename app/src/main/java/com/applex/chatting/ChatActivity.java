@@ -134,20 +134,34 @@ public class ChatActivity extends AppCompatActivity {
         RoomID = getIntent().getStringExtra("ID");
         DisplayLastSeen();
 
+        userMessagesList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if(bottom < oldBottom){
+                    userMessagesList.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
+                        }
+                    }, 100);
+                }
+            }
+        });
+
 //        MessageInputText.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                MessageInputText.requestFocus();
-//                MessageInputText.setFocusableInTouchMode(true);
-//                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//                imm.showSoftInput(MessageInputText, InputMethodManager.SHOW_IMPLICIT);
+////                MessageInputText.requestFocus();
+////                MessageInputText.setFocusableInTouchMode(true);
+////                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+////                imm.showSoftInput(MessageInputText, InputMethodManager.SHOW_IMPLICIT);
+//                userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
 //            }
 //        });
 
        MessageInputText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -753,7 +767,6 @@ public class ChatActivity extends AppCompatActivity {
         String messageText = MessageInputText.getText().toString();
         FirebaseFirestore.getInstance().collection("Users").document(mAuth.getUid()).update("istyping", 0);
 
-
         if(TextUtils.isEmpty(messageText)){
             Toast.makeText(this, "first write your message...", Toast.LENGTH_SHORT).show();
         }
@@ -766,6 +779,9 @@ public class ChatActivity extends AppCompatActivity {
             Timestamp ts = Timestamp.now();
             messages.setTimestamp(ts);
             messages.setType("text");
+
+            MessageInputText.setText("");
+
             FirebaseFirestore.getInstance().collection("Rooms/"+ getIntent().getStringExtra("ID")+"/Messages/").document()
                     .set(messages).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -776,7 +792,6 @@ public class ChatActivity extends AppCompatActivity {
                     else{
                         Toast.makeText(ChatActivity.this, "Error", Toast.LENGTH_SHORT).show();
                     }
-                    MessageInputText.setText("");
 
                 }
             });
