@@ -496,7 +496,9 @@ public class ChatActivity extends AppCompatActivity {
                                                     Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
-                                            listener.remove();
+                                            if(listener != null){
+                                                listener.remove();
+                                            }
                                         }
                                     });
                         })
