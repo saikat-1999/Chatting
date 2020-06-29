@@ -507,6 +507,7 @@ public class ChatActivity extends AppCompatActivity {
                                                     SendMessage();
                                                 }
                                             });
+                                            DisplayLastSeen();
 //                                            userLastSeen.setText("BLOCKED");
 //                                            userLastSeen.setTextColor(getResources().getColor(android.R.color.holo_red_light));
 //                                            listener.remove();
