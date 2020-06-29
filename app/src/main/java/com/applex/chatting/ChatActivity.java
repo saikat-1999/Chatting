@@ -698,6 +698,8 @@ public class ChatActivity extends AppCompatActivity {
                                         @Override
                                         public void onClick(View v) {
                                             Toast.makeText(getApplicationContext(), "You can no longer send messages to "+userName.getText().toString(), Toast.LENGTH_SHORT).show();
+                                            userLastSeen.setText("");
+                                            userLastSeen.setTextColor(getResources().getColor(android.R.color.black));
                                         }
                                     });
                                 }
